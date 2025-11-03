@@ -1,0 +1,202 @@
+.product-table {
+    width: 100%;
+    border-collapse: collapse;
+    max-width: 100%;
+    table-layout: auto;
+}
+
+.product-table th,
+.product-table td {
+    border: 1px solid #ddd;
+    padding: 0.625rem 0.9375rem; /* 10px 15px */
+    text-align: center;
+}
+
+.product-table th {
+    background-color: #165638;
+    color: white;
+    font-weight: bold;
+}
+
+.product-table tr:nth-child(even) {
+    background-color: white;
+}
+
+.product-table tr:hover {
+    background-color: #90eac0;
+}
+
+.product-table button {
+    padding: 0.5rem 0.75rem; /* 8px 12px */
+    margin-right: 0.375rem; /* 6px */
+    border: none;
+    border-radius: 0.3125rem; /* 5px */
+    cursor: pointer;
+    font-size: 0.9375rem; /* 15px */
+    font-weight: bold;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.product-edit-button {
+    background-color: rgb(38, 120, 235);
+    color: white;
+}
+
+.product-delete-button {
+    background-color: #f44336;
+    color: white;
+}
+
+.product-edit-button:hover {
+    background-color: #1e5bb8;
+}
+
+.product-delete-button:hover {
+    background-color: #d32f2f;
+}
+
+/* Search */
+.product-search-container {
+    margin-bottom: 1.25rem; /* 20px */
+}
+
+.product-search-input {
+    width: 100%;
+    padding: 0.625rem; /* 10px */
+    font-size: 0.875rem; /* 14px */
+    border: 1px solid #ddd;
+    border-radius: 0.25rem; /* 4px */
+}
+
+/* Table responsive wrapper */
+.table-responsive {
+    width: 100%;
+}
+
+/* Pagination */
+.pagination-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 1.25rem; /* 20px */
+    gap: 0.625rem; /* 10px */
+    flex-wrap: wrap;
+}
+
+.pagination-pages {
+    display: flex;
+    gap: 0.3125rem; /* 5px */
+}
+
+.pagination-button {
+    padding: 0.5rem 0.75rem; /* 8px 12px */
+    border: 1px solid #ddd;
+    border-radius: 0.25rem; /* 4px */
+    background: #fff;
+    cursor: pointer;
+}
+
+.pagination-button[disabled] {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.pagination-button.active {
+    background: #007bff;
+    color: #fff;
+    font-weight: 700;
+}
+
+.pagination-info {
+    margin-left: 0.625rem; /* 10px */
+    font-size: 0.875rem; /* 14px */
+}
+
+.no-products-cell {
+    text-align: center;
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+    /* No special rules needed; layout is fluid */
+}
+
+@media (max-width: 768px) {
+    .product-table {
+        font-size: 0.875rem; /* 14px */
+    }
+
+    /* Stack table rows on mobile */
+    .product-table thead {
+        display: none;
+    }
+
+    .product-table, 
+    .product-table tbody, 
+    .product-table tr, 
+    .product-table td {
+        display: block;
+        width: 100%;
+    }
+
+    .product-table tr {
+        margin-bottom: 0.75rem; /* 12px */
+        border: 1px solid #e5e7eb;
+        border-radius: 0.375rem; /* 6px */
+        overflow: hidden;
+    }
+
+    .product-table td {
+        text-align: left;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 0.75rem; /* 12px */
+        border: none;
+        border-bottom: 1px solid #eee;
+        padding: 0.625rem 0.75rem; /* 10px 12px */
+    }
+
+    .product-table td:last-child {
+        border-bottom: none;
+    }
+
+    .product-table td::before {
+        content: attr(data-label);
+        font-weight: 600;
+        color: #374151;
+        flex: 1 1 50%;
+        max-width: 50vw;
+    }
+
+    .product-table td[data-label="Actions"] {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 0.5rem;
+        align-items: stretch;
+    }
+
+    /* Make the label for Actions span full width above both buttons */
+    .product-table td[data-label="Actions"]::before {
+        grid-column: 1 / -1;
+        margin-bottom: 0.25rem;
+        flex: unset; /* override flex from generic rule */
+        max-width: none;
+    }
+
+    .product-table button {
+        margin-right: 0;
+        width: 100%;
+        padding: 0.5rem 0.75rem;
+        font-size: 0.8125rem; /* 13px */
+    }
+}
+
+@media (max-width: 480px) {
+    .product-table {
+        font-size: 0.8125rem; /* 13px */
+    }
+    .product-table td {
+        padding: 0.5rem 0.625rem; /* 8px 10px */
+    }
+}

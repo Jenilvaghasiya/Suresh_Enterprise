@@ -1,0 +1,29 @@
+/* Note: This is adapted from CategoryPage.css. Class names are changed. */
+.user-page-container {
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+.user-page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+.user-page-header h2 {
+    color: #165638;
+    font-size: 25px;
+}
+.user-toggle-button {
+    padding: 10px 15px;
+    background: #165638;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+.user-toggle-button:hover {
+    background: #0fec85;
+}

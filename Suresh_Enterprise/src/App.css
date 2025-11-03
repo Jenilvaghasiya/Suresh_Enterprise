@@ -1,0 +1,109 @@
+/* ========== Global Styles ========== */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+        'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+        sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    background-color: #f5f7fa;
+}
+
+/* ========== App Layout ========== */
+.app-layout {
+    display: flex;
+    min-height: 100vh;
+    width: 100%;
+    position: relative;
+}
+
+/* ========== Main Content Area ========== */
+.main-content {
+    flex: 1;
+    min-height: 100vh;
+    padding: 30px;
+    margin-left: 260px;
+    background-color: #f5f7fa;
+    transition: margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    overflow-x: hidden;
+}
+
+/* Full width content for login page */
+.main-content-full {
+    flex: 1;
+    min-height: 100vh;
+    padding: 0;
+    margin-left: 0;
+    background-color: #f5f7fa;
+    width: 100%;
+}
+
+/* When sidebar is closed on desktop */
+@media (min-width: 769px) {
+    .app-layout:has(.sidebar.closed) .main-content {
+        margin-left: 0;
+    }
+}
+
+/* ========== Tablet Styles ========== */
+@media (max-width: 768px) {
+    .main-content {
+        margin-left: 0;
+        padding: 80px 20px 20px 20px; /* Extra top padding for toggle button */
+        width: 100%;
+    }
+}
+
+/* ========== Mobile Styles ========== */
+@media (max-width: 480px) {
+    .main-content {
+        padding: 70px 15px 15px 15px;
+    }
+}
+
+/* ========== Content Container ========== */
+.content-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    width: 100%;
+}
+
+/* ========== Responsive Tables ========== */
+@media (max-width: 768px) {
+    table {
+        font-size: 14px;
+    }
+    
+    th, td {
+        padding: 8px 4px;
+    }
+}
+
+/* ========== Responsive Forms ========== */
+@media (max-width: 768px) {
+    .form-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    input, select, textarea {
+        font-size: 16px; /* Prevents zoom on iOS */
+    }
+}
+
+/* ========== Print Styles ========== */
+@media print {
+    .sidebar,
+    .sidebar-toggle {
+        display: none !important;
+    }
+    
+    .main-content {
+        margin-left: 0 !important;
+        padding: 0 !important;
+    }
+}

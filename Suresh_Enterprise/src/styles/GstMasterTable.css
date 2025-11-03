@@ -1,0 +1,119 @@
+.gst-master-table {
+    width: 100%;
+    border-collapse: collapse;
+    max-width: 100%;
+    table-layout: auto;
+}
+
+.gst-master-table th,
+.gst-master-table td {
+    border: 1px solid #ddd;
+    padding: 0.625rem 0.9375rem; /* 10px 15px */
+    text-align: center;
+}
+
+.gst-master-table th {
+    background-color: #165638;
+    color: white;
+    font-weight: bold;
+}
+
+.gst-master-table tr:nth-child(even) {
+    background-color: white;
+}
+
+.gst-master-table tr:hover {
+    background-color: #90eac0;
+}
+
+.gst-master-table button {
+    padding: 0.5rem 0.75rem; /* 8px 12px */
+    margin-right: 0.375rem; /* 6px */
+    border: none;
+    border-radius: 0.3125rem; /* 5px */
+    cursor: pointer;
+    font-size: 0.9375rem; /* 15px */
+    font-weight: bold;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.gst-edit-button {
+    background-color: rgb(38, 120, 235);
+    color: white;
+}
+
+.gst-delete-button {
+    background-color: #f44336;
+    color: white;
+}
+
+.gst-edit-button:hover {
+    background-color: #1e5bb8;
+}
+
+.gst-delete-button:hover {
+    background-color: #d32f2f;
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+    /* Layout is fluid; no special rules needed */
+}
+
+@media (max-width: 768px) {
+    .gst-master-table { font-size: 0.875rem; /* 14px */ }
+
+    /* Stack table rows */
+    .gst-master-table thead { display: none; }
+    .gst-master-table, .gst-master-table tbody, .gst-master-table tr, .gst-master-table td {
+        display: block;
+        width: 100%;
+    }
+    .gst-master-table tr {
+        margin-bottom: 0.75rem; /* 12px */
+        border: 1px solid #e5e7eb;
+        border-radius: 0.375rem; /* 6px */
+        overflow: hidden;
+    }
+    .gst-master-table td {
+        text-align: left;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 0.75rem;
+        border: none;
+        border-bottom: 1px solid #eee;
+        padding: 0.625rem 0.75rem; /* 10px 12px */
+    }
+    .gst-master-table td:last-child { border-bottom: none; }
+    .gst-master-table td::before {
+        content: attr(data-label);
+        font-weight: 600;
+        color: #374151;
+        flex: 1 1 50%;
+        max-width: 50vw;
+    }
+    .gst-master-table td[data-label="Actions"] {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 0.5rem;
+        align-items: stretch;
+    }
+    .gst-master-table td[data-label="Actions"]::before {
+        grid-column: 1 / -1;
+        margin-bottom: 0.25rem;
+        flex: unset;
+        max-width: none;
+    }
+    .gst-master-table button {
+        margin-right: 0;
+        width: 100%;
+        padding: 0.5rem 0.75rem;
+        font-size: 0.8125rem; /* 13px */
+    }
+}
+
+@media (max-width: 480px) {
+    .gst-master-table { font-size: 0.8125rem; /* 13px */ }
+    .gst-master-table td { padding: 0.5rem 0.625rem; }
+}

@@ -1,0 +1,80 @@
+.company-table {
+    width: 100%;
+    border-collapse: collapse;
+    max-width: 100%;
+    table-layout: auto;
+}
+
+.company-table th,
+.company-table td {
+    border: 1px solid #ddd; 
+    padding: 0.625rem 0.75rem; /* 10px 12px */
+    text-align: center;
+    font-size: 0.875rem; /* 14px */
+}
+
+.company-table th {
+    background-color: #165638;
+    color: white;
+    font-weight: bold;
+}
+
+.company-table tr:nth-child(even) {
+    background-color: white;
+}
+
+.company-table tr:hover {
+    background-color: #90eac0;
+}
+
+.company-table button {
+    padding: 0.5rem 0.75rem; /* 8px 12px */
+    margin-right: 0.375rem; /* 6px */
+    border: none;
+    border-radius: 0.3125rem; /* 5px */
+    cursor: pointer;
+    font-size: 0.875rem; /* 14px */
+    font-weight: bold;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.company-edit-button {
+    background-color: rgb(38, 120, 235);
+    color: white;
+}
+
+.company-delete-button {
+    background-color: #f44336;
+    color: white;
+}
+
+.company-edit-button:hover {
+    background-color: #1e5bb8;
+}
+
+.company-delete-button:hover {
+    background-color: #d32f2f;
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+    /* Layout is fluid */
+}
+
+@media (max-width: 768px) {
+    .company-table { font-size: 0.875rem; }
+    .company-table thead { display: none; }
+    .company-table, .company-table tbody, .company-table tr, .company-table td { display: block; width: 100%; }
+    .company-table tr { margin-bottom: 0.75rem; border: 1px solid #e5e7eb; border-radius: 0.375rem; overflow: hidden; }
+    .company-table td { text-align: left; display: flex; justify-content: space-between; align-items: center; gap: 0.75rem; border: none; border-bottom: 1px solid #eee; padding: 0.625rem 0.75rem; }
+    .company-table td:last-child { border-bottom: none; }
+    .company-table td::before { content: attr(data-label); font-weight: 600; color: #374151; flex: 1 1 50%; max-width: 50vw; }
+    .company-table td[data-label="Actions"] { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.5rem; align-items: stretch; }
+    .company-table td[data-label="Actions"]::before { grid-column: 1 / -1; margin-bottom: 0.25rem; flex: unset; max-width: none; }
+    .company-table button { margin-right: 0; width: 100%; padding: 0.5rem 0.75rem; font-size: 0.8125rem; }
+}
+
+@media (max-width: 480px) {
+    .company-table { font-size: 0.8125rem; }
+    .company-table td { padding: 0.5rem 0.625rem; }
+}

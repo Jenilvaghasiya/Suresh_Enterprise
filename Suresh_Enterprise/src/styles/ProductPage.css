@@ -1,0 +1,109 @@
+/* Global box-sizing reset for easier responsive layout management */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+/* Media should scale within their containers */
+img, video {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+.product-page-container {
+    display: flex;
+    flex-direction: column;
+    /* Use relative units for padding */
+    padding: 1.25rem; /* 20px */
+    width: 100%;
+    /* Use max-width for larger screens to maintain readability */
+    max-width: 87.5rem; /* 1400px */
+    margin: 0 auto; /* Center the container */
+}
+
+.product-page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    /* Use relative units for margins */
+    margin-bottom: 1rem; /* 15px */
+    margin-top: 1rem; /* 15px */
+    /* Add flex-wrap for smaller screens before the breakpoint */
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.product-page-header h2 {
+    margin: 0;
+    /* Use rem for responsive font size */
+    font-size: 1.5rem; /* 24px */
+    font-weight: bold;
+    color: #165638;
+    /* Allow h2 to shrink if needed */
+    flex: 1 1 auto;
+}
+
+.product-toggle-button {
+    padding: 0.625rem 1rem; /* 10px 16px */
+    background: #165638;
+    color: white;
+    border: none;
+    border-radius: 0.375rem; /* 6px */
+    font-size: 0.9375rem; /* 15px */
+    cursor: pointer;
+    transition: background-color 0.2s ease-in-out;
+    /* Ensure button doesn't shrink too small */
+    flex: 0 0 auto;
+}
+
+.product-toggle-button:hover {
+    background: #0fec85;
+}
+
+.product-body {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
+/* Responsive Design */
+
+/* Tablet - No specific rules needed if layout is already fluid */
+@media (max-width: 64rem) {
+    /* Removed the fixed margin-left. The container is now centered. */
+    .product-page-container {
+        padding: 1rem;
+    }
+}
+
+/* Large Mobile */
+@media (max-width: 48rem) {
+    .product-page-header {
+        /* Stack header elements */
+        flex-direction: column;
+        gap: 1rem; /* 15px */
+        align-items: stretch;
+    }
+
+    .product-page-header h2 {
+        font-size: 1.375rem; /* 22px */
+        text-align: center;
+    }
+
+    .product-toggle-button {
+        /* Make button full-width */
+        width: 100%;
+    }
+}
+
+/* Small Mobile */
+@media (max-width: 30rem) {
+    .product-page-container {
+        padding: 0.75rem; /* 12px */
+    }
+
+    .product-page-header h2 {
+        font-size: 1.25rem; /* 20px */
+    }
+}

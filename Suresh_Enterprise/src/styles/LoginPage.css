@@ -1,0 +1,109 @@
+/* Main container to center the login box */
+.login-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background-color: #f0f2f5;
+  font-family: sans-serif;
+  padding: 1rem; /* prevent edge touching on small screens */
+}
+
+/* The white box holding the form */
+.login-box {
+  background: white;
+  padding: 2.5rem; /* 40px */
+  border-radius: 0.75rem; /* 12px */
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 24rem; /* 400px */
+  text-align: center;
+}
+
+/* "Admin Login" title */
+.login-title {
+  color: #165638; /* Matches your app's primary color */
+  font-size: 1.75rem; /* 28px */
+  margin-bottom: 0.625rem; /* 10px */
+}
+
+/* "Please sign in" subtitle */
+.login-subtitle {
+  color: #666;
+  margin-bottom: 1.875rem; /* 30px */
+  font-size: 1rem; /* 16px */
+}
+
+/* Group for each label and input */
+.input-group {
+  margin-bottom: 1.25rem; /* 20px */
+  text-align: left;
+}
+
+.input-group label {
+  display: block;
+  margin-bottom: 0.5rem; /* 8px */
+  color: #333;
+  font-weight: 600;
+}
+
+.input-group input {
+  width: 100%;
+  padding: 0.75rem; /* 12px */
+  border: 1px solid #ddd;
+  border-radius: 0.5rem; /* 8px */
+  font-size: 1rem; /* 16px */
+  box-sizing: border-box; /* Ensures padding doesn't affect width */
+}
+
+/* Style for the login button */
+.login-button {
+  width: 100%;
+  padding: 0.75rem; /* 12px */
+  background-color: #165638;
+  color: white;
+  border: none;
+  border-radius: 0.5rem; /* 8px */
+  font-size: 1.125rem; /* 18px */
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.login-button:hover {
+  background-color: #0fec85; /* A lighter shade for hover */
+}
+
+/* Error message styling */
+.error-message {
+  color: #d32f2f;
+  background-color: #ffebee;
+  padding: 0.625rem; /* 10px */
+  border-radius: 0.5rem; /* 8px */
+  margin-bottom: 1.25rem; /* 20px */
+  font-size: 0.875rem; /* 14px */
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+  .login-box { max-width: 28rem; }
+}
+
+@media (max-width: 768px) {
+  .login-container { padding: 0.75rem; }
+  .login-box { padding: 2rem; max-width: 26rem; }
+  .login-title { font-size: 1.625rem; }
+  .login-subtitle { font-size: 0.9375rem; margin-bottom: 1.5rem; }
+  .input-group { margin-bottom: 1rem; }
+  .login-button { padding: 0.75rem; font-size: 1.0625rem; }
+}
+
+@media (max-width: 480px) {
+  .login-container { padding: 0.75rem; }
+  .login-box { padding: 1.25rem; max-width: 100%; border-radius: 0.625rem; }
+  .login-title { font-size: 1.5rem; margin-bottom: 0.5rem; }
+  .login-subtitle { font-size: 0.9375rem; margin-bottom: 1rem; }
+  .input-group label { margin-bottom: 0.5rem; }
+  .input-group input { padding: 0.6875rem; font-size: 0.9375rem; }
+  .login-button { padding: 0.8125rem; font-size: 1.0625rem; }
+}

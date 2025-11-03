@@ -1,0 +1,76 @@
+.company-page-container {
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+}
+
+.company-page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+    margin-top: 15px;
+}
+
+.company-page-header h2 {
+    margin: 0;
+    font-size: 25px;
+    font-weight: bold;
+    color: #165638
+}
+
+.company-toggle-button {
+    padding: 10px 15px;
+    background: #165638;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 15px;
+    cursor: pointer;
+    transition: background-color 0.2s ease-in-out;
+}
+
+.company-toggle-button:hover {
+    background: #0fec85;
+}
+
+.company-body {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+    .company-page-header {
+        margin-left: 180px;
+    }
+}
+
+@media (max-width: 768px) {
+    .company-page-header {
+        margin-left: 0;
+        flex-direction: column;
+        gap: 15px;
+        align-items: stretch;
+    }
+
+    .company-page-header h2 {
+        font-size: 22px;
+        text-align: center;
+    }
+
+    .company-toggle-button {
+        width: 100%;
+    }
+}
+
+@media (max-width: 480px) {
+    .company-page-container {
+        padding: 10px;
+    }
+
+    .company-page-header h2 {
+        font-size: 20px;
+    }
+}

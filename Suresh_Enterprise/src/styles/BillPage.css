@@ -1,0 +1,75 @@
+.bill-pages-container {
+    padding: 1.25rem;
+}
+
+.bill-pages-header {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 1.25rem;
+    margin-bottom: 1.25rem;
+}
+
+.bill-pages-header h2 {
+    color: #165638;
+    font-size: 1.75rem;
+    font-weight: bold;
+    margin: 0;
+}
+
+.bill-pages-header button {
+    min-height: 2.5rem;
+    padding: 0.625rem 1.25rem;
+    background: #165638;
+    color: white;
+    border: none;
+    border-radius: 0.3125rem;
+    font-size: 0.9375rem;
+    cursor: pointer;
+    transition: background-color 0.2s ease-in-out;
+}
+
+.bill-pages-header button:hover {
+    background: #0fec85;
+}
+
+.bill-body {
+    width: 100%;
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+    /* layout remains centered and fluid */
+}
+
+@media (max-width: 768px) {
+    .bill-pages-container {
+        padding: 0.9375rem;
+    }
+
+    .bill-pages-header {
+        flex-direction: column;
+        gap: 0.9375rem;
+        align-items: stretch;
+    }
+
+    .bill-pages-header h2 {
+        font-size: 1.5rem;
+        text-align: center;
+    }
+
+    .bill-pages-header button {
+        width: 100%;
+    }
+}
+
+@media (max-width: 480px) {
+    .bill-pages-container {
+        padding: 0.625rem;
+    }
+
+    .bill-pages-header h2 {
+        font-size: 1.25rem;
+    }
+}

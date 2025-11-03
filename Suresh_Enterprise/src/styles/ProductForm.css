@@ -1,0 +1,163 @@
+.product-form-container {
+    margin: 0.25rem 0 3rem 0; /* 5px 0 50px 0 */
+    padding: 1.25rem; /* 20px */
+    display: flex;
+    flex-direction: column;
+    gap: 1.75rem; /* 30px */
+    background: #ffffff;
+    border-radius: 0.625rem; /* 10px */
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    width: 100%;
+}
+
+.product-form-container h3 {
+    color: #165638;
+    margin: 0;
+    font-size: 1.5rem; /* 25px */
+    font-weight: bold;
+}
+
+.form-grid {
+    display: grid;
+    /* This grid is already responsive! It will fit as many columns as
+       possible that are at least 15rem wide, and stack on mobile. */
+    grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr)); /* 240px */
+    gap: 1.125rem 1.5rem; /* 18px 24px */
+}
+
+.form-grid label {
+    display: flex;
+    flex-direction: column;
+    font-size: 0.875rem; /* 14px */
+    font-weight: 500;
+    color: #374151;
+}
+
+.form-grid input[type="text"],
+.form-grid input[type="number"],
+.form-grid select {
+    /* Use rem for touch-friendly padding */
+    padding: 0.75rem; /* 12px */
+    border: 1px solid #cbd5e1;
+    border-radius: 0.375rem; /* 6px */
+    margin-top: 0.375rem; /* 6px */
+    font-size: 0.875rem; /* 14px */
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    background: white;
+    appearance: none;
+    -webkit-appearance: none; /* For iOS */
+    width: 100%; /* Ensure inputs take full grid column width */
+}
+
+.form-grid input[type="text"]:focus,
+.form-grid input[type="number"]:focus,
+.form-grid select:focus {
+    outline: none;
+    border-color: #2563eb;
+    box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.25);
+}
+
+.form-grid input[type="checkbox"] {
+    width: 1.125rem; /* 18px */
+    height: 1.125rem; /* 18px */
+    accent-color: #165638;
+    margin-right: 0.5rem; /* 8px */
+    cursor: pointer;
+}
+
+.checkbox-label {
+    flex-direction: row;
+    align-items: center;
+    margin-top: 0.375rem; /* 6px */
+    font-size: 0.875rem; /* 14px */
+}
+
+.form-button {
+    padding: 0.75rem 1rem; /* 12px 16px */
+    background: #165638;
+    color: white;
+    border: none;
+    /* Use min-width for base size, but allow to grow */
+    min-width: 8rem; /* 125px */
+    width: auto;
+    border-radius: 0.375rem; /* 6px */
+    cursor: pointer;
+    font-size: 0.9375rem; /* 15px */
+    margin-top: 1.25rem; /* 20px */
+    font-weight: 400;
+    transition: background 0.2s ease-in-out;
+    align-self: flex-start;
+}
+
+.form-button:hover {
+    background: #0fec85;
+}
+
+.form-button:active {
+    background: #90eac0;
+}
+
+.form-button:disabled {
+    background: #9ca3af;
+    cursor: not-allowed;
+}
+
+.input-error {
+    border-color: #ef4444 !important;
+}
+
+.input-error:focus {
+    border-color: #dc2626 !important;
+    box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.25) !important;
+}
+
+.error-message {
+    color: #ef4444;
+    font-size: 0.75rem; /* 12px */
+    margin-top: 0.25rem; /* 4px */
+    font-weight: 400;
+}
+
+/* This <small> tag was poorly styled. 
+   Assuming it's the same as .error-message */
+small.error-message {
+    grid-column: 1 / -1;
+    margin-top: -0.625rem; /* -10px */
+    margin-bottom: 0.375rem; /* 6px */
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+    /* Removed fixed margin-left */
+    .product-form-container {
+        max-width: 100%;
+    }
+}
+
+@media (max-width: 768px) {
+    .product-form-container {
+        margin-left: 0;
+        padding: 1rem; /* 15px */
+    }
+
+    /* This rule is redundant because of auto-fit, but harmless */
+    .form-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .form-button {
+        /* Make button full-width on mobile */
+        width: 100%;
+    }
+}
+
+@media (max-width: 480px) {
+    .product-form-container {
+        padding: 0.75rem; /* 12px */
+        gap: 1.25rem; /* 20px */
+    }
+
+    .product-form-container h3 {
+        font-size: 1.25rem; /* 20px */
+    }
+}
