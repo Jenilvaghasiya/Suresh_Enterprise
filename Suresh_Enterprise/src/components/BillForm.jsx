@@ -45,6 +45,14 @@ const BillForm = ({ onFormSubmit, initialInvoice = null, onCancel }) => {
   });
   const [userDetail, setUserDetail] = useState(null);
   const isCustomer = currentUser?.userType === "Customer User";
+  const [companySearch, setCompanySearch] = useState("");
+  const [companyOpen, setCompanyOpen] = useState(false);
+  const [customerSearch, setCustomerSearch] = useState("");
+  const [customerOpen, setCustomerOpen] = useState(false);
+  const [gstSearch, setGstSearch] = useState("");
+  const [gstOpen, setGstOpen] = useState(false);
+  const [productSearch, setProductSearch] = useState([]);
+  const [productOpen, setProductOpen] = useState([]);
 
   // Get user ID from localStorage
   const getUserId = () => {
@@ -143,6 +151,35 @@ const BillForm = ({ onFormSubmit, initialInvoice = null, onCancel }) => {
     };
     fetchUserDetail();
   }, []);
+
+  // Sync search labels when selections or lists change
+  useEffect(() => {
+    const comp = companies.find((c) => String(c.id) === String(formData.company_id));
+    setCompanySearch(comp ? (comp.companyName || comp.name) : "");
+  }, [formData.company_id, companies]);
+
+  useEffect(() => {
+    const cust = customers.find((c) => String(c.id) === String(formData.customer_id));
+    setCustomerSearch(cust ? (cust.customerName || cust.name) : "");
+  }, [formData.customer_id, customers]);
+
+  useEffect(() => {
+    const gst = gstRates.find((g) => String(g.id) === String(formData.gstMasterId));
+    setGstSearch(gst ? `${gst.gstRate}%` : "");
+  }, [formData.gstMasterId, gstRates]);
+
+  useEffect(() => {
+    // Ensure product search arrays align with items
+    const labels = formData.items.map((it) => {
+      const p = products.find((pr) => String(pr.id) === String(it.product_id));
+      return p ? (p.productName || p.name) : "";
+    });
+    setProductSearch(labels);
+    setProductOpen((prev) => {
+      const next = Array(formData.items.length).fill(false);
+      return next;
+    });
+  }, [formData.items, products]);
 
   useEffect(() => {
     const selectedCustomer = customers.find(
@@ -497,37 +534,83 @@ const BillForm = ({ onFormSubmit, initialInvoice = null, onCancel }) => {
             {!isCustomer && (
               <label>
                 Company:
-                <select
-                  className={errors.company_id ? "input-error" : ""}
-                  value={formData.company_id}
-                  onChange={(e) => {
-                    const selectedCompanyId = e.target.value;
-                    const selectedCompany = companies.find(
-                      (c) => c.id === parseInt(selectedCompanyId)
-                    );
-
-                    // Auto-set GST master ID from selected company
-                    if (selectedCompany && selectedCompany.gstMasterId) {
-                      setFormData({
-                        ...formData,
-                        company_id: selectedCompanyId,
-                        gstMasterId: selectedCompany.gstMasterId,
-                      });
-                    } else {
-                      setFormData({ ...formData, company_id: selectedCompanyId });
-                    }
-
-                    if (errors.company_id)
-                      setErrors((prev) => ({ ...prev, company_id: null }));
-                  }}
-                >
-                  <option value="">Select Company</option>
-                  {companies.map((c) => (
-                    <option key={c.id} value={c.id}>
-                      {c.companyName || c.name}
-                    </option>
-                  ))}
-                </select>
+                <div style={{ position: "relative" }}>
+                  <input
+                    type="text"
+                    className={errors.company_id ? "input-error" : ""}
+                    value={companySearch}
+                    onChange={(e) => {
+                      setCompanySearch(e.target.value);
+                      setCompanyOpen(true);
+                    }}
+                    onFocus={() => setCompanyOpen(true)}
+                    placeholder="Search company..."
+                    autoComplete="off"
+                  />
+                  {companyOpen && (
+                    <div
+                      style={{
+                        position: "absolute",
+                        top: "100%",
+                        left: 0,
+                        right: 0,
+                        zIndex: 10,
+                        background: "#fff",
+                        border: "1px solid #ddd",
+                        maxHeight: "200px",
+                        overflowY: "auto",
+                      }}
+                      onMouseDown={(e) => e.preventDefault()}
+                    >
+                      <div
+                        style={{ padding: "8px", color: "#666" }}
+                        onClick={() => {
+                          setFormData({ ...formData, company_id: "" });
+                          setCompanySearch("");
+                          setCompanyOpen(false);
+                          if (errors.company_id)
+                            setErrors((prev) => ({ ...prev, company_id: null }));
+                        }}
+                      >
+                        Select Company
+                      </div>
+                      {companies
+                        .filter((c) => {
+                          const label = c.companyName || c.name || "";
+                          return label.toLowerCase().includes((companySearch || "").toLowerCase());
+                        })
+                        .map((c) => {
+                          const label = c.companyName || c.name;
+                          return (
+                            <div
+                              key={c.id}
+                              style={{ padding: "8px", cursor: "pointer" }}
+                              onClick={() => {
+                                // Auto-set GST from company if present
+                                if (c.gstMasterId) {
+                                  setFormData({ ...formData, company_id: String(c.id), gstMasterId: c.gstMasterId });
+                                } else {
+                                  setFormData({ ...formData, company_id: String(c.id) });
+                                }
+                                setCompanySearch(label);
+                                setCompanyOpen(false);
+                                if (errors.company_id)
+                                  setErrors((prev) => ({ ...prev, company_id: null }));
+                              }}
+                            >
+                              {label}
+                            </div>
+                          );
+                        })}
+                      {companies.filter((c) => {
+                        const label = c.companyName || c.name || "";
+                        return label.toLowerCase().includes((companySearch || "").toLowerCase());
+                      }).length === 0 && (
+                        <div style={{ padding: "8px", color: "#999" }}>No results</div>
+                      )}
+                    </div>
+                  )}
+                </div>
                 {errors.company_id && (
                   <small className="error-message">{errors.company_id}</small>
                 )}
@@ -535,22 +618,78 @@ const BillForm = ({ onFormSubmit, initialInvoice = null, onCancel }) => {
             )}
             <label>
               Customer:
-              <select
-                className={errors.customer_id ? "input-error" : ""}
-                value={formData.customer_id}
-                onChange={(e) => {
-                  setFormData({ ...formData, customer_id: e.target.value });
-                  if (errors.customer_id)
-                    setErrors((prev) => ({ ...prev, customer_id: null }));
-                }}
-              >
-                <option value="">Select Customer</option>
-                {customers.map((c) => (
-                  <option key={c.id} value={c.id}>
-                    {c.customerName || c.name}
-                  </option>
-                ))}
-              </select>
+              <div style={{ position: "relative" }}>
+                <input
+                  type="text"
+                  className={errors.customer_id ? "input-error" : ""}
+                  value={customerSearch}
+                  onChange={(e) => {
+                    setCustomerSearch(e.target.value);
+                    setCustomerOpen(true);
+                  }}
+                  onFocus={() => setCustomerOpen(true)}
+                  placeholder="Search customer..."
+                  autoComplete="off"
+                />
+                {customerOpen && (
+                  <div
+                    style={{
+                      position: "absolute",
+                      top: "100%",
+                      left: 0,
+                      right: 0,
+                      zIndex: 10,
+                      background: "#fff",
+                      border: "1px solid #ddd",
+                      maxHeight: "200px",
+                      overflowY: "auto",
+                    }}
+                    onMouseDown={(e) => e.preventDefault()}
+                  >
+                    <div
+                      style={{ padding: "8px", color: "#666" }}
+                      onClick={() => {
+                        setFormData({ ...formData, customer_id: "" });
+                        setCustomerSearch("");
+                        setCustomerOpen(false);
+                        if (errors.customer_id)
+                          setErrors((prev) => ({ ...prev, customer_id: null }));
+                      }}
+                    >
+                      Select Customer
+                    </div>
+                    {customers
+                      .filter((c) => {
+                        const label = c.customerName || c.name || "";
+                        return label.toLowerCase().includes((customerSearch || "").toLowerCase());
+                      })
+                      .map((c) => {
+                        const label = c.customerName || c.name;
+                        return (
+                          <div
+                            key={c.id}
+                            style={{ padding: "8px", cursor: "pointer" }}
+                            onClick={() => {
+                              setFormData({ ...formData, customer_id: String(c.id) });
+                              setCustomerSearch(label);
+                              setCustomerOpen(false);
+                              if (errors.customer_id)
+                                setErrors((prev) => ({ ...prev, customer_id: null }));
+                            }}
+                          >
+                            {label}
+                          </div>
+                        );
+                      })}
+                    {customers.filter((c) => {
+                      const label = c.customerName || c.name || "";
+                      return label.toLowerCase().includes((customerSearch || "").toLowerCase());
+                    }).length === 0 && (
+                      <div style={{ padding: "8px", color: "#999" }}>No results</div>
+                    )}
+                  </div>
+                )}
+              </div>
               {errors.customer_id && (
                 <small className="error-message">{errors.customer_id}</small>
               )}
@@ -597,27 +736,67 @@ const BillForm = ({ onFormSubmit, initialInvoice = null, onCancel }) => {
               ) : (
                 <>
                   GST Rate:
-                  <select value={formData.gstMasterId} onChange={handleGstChange}>
-                    {gstRates.map((g) => {
-                      const selectedCustomer = customers.find(
-                        (c) => c.id === parseInt(formData.customer_id)
-                      );
-                      let isExclusivelyWithGst = false;
-                      if (selectedCustomer) {
-                        // Customer is exclusively 'with GST' if withGst is true and withoutGst is false.
-                        isExclusivelyWithGst = selectedCustomer.withGst && !selectedCustomer.withoutGst;
-                      } else if (userDetail) {
-                        // Fallback to user's permissions if no customer is selected.
-                        isExclusivelyWithGst = userDetail.withGst && !userDetail.withoutGst;
-                      }
-                      const isDisabled = isExclusivelyWithGst && g.gstRate === 0;
-                      return (
-                        <option key={g.id} value={g.id} disabled={isDisabled}>
-                          {g.gstRate}%
-                        </option>
-                      );
-                    })}
-                  </select>
+                  <div style={{ position: "relative" }}>
+                    <input
+                      type="text"
+                      value={gstSearch}
+                      onChange={(e) => {
+                        setGstSearch(e.target.value);
+                        setGstOpen(true);
+                      }}
+                      onFocus={() => setGstOpen(true)}
+                      placeholder="Search GST rate..."
+                      autoComplete="off"
+                    />
+                    {gstOpen && (
+                      <div
+                        style={{
+                          position: "absolute",
+                          top: "100%",
+                          left: 0,
+                          right: 0,
+                          zIndex: 10,
+                          background: "#fff",
+                          border: "1px solid #ddd",
+                          maxHeight: "200px",
+                          overflowY: "auto",
+                        }}
+                        onMouseDown={(e) => e.preventDefault()}
+                      >
+                        {gstRates
+                          .filter((g) => `${g.gstRate}%`.toLowerCase().includes((gstSearch || "").toLowerCase()))
+                          .map((g) => {
+                            const selectedCustomer = customers.find(
+                              (c) => c.id === parseInt(formData.customer_id)
+                            );
+                            let isExclusivelyWithGst = false;
+                            if (selectedCustomer) {
+                              isExclusivelyWithGst = selectedCustomer.withGst && !selectedCustomer.withoutGst;
+                            } else if (userDetail) {
+                              isExclusivelyWithGst = userDetail.withGst && !userDetail.withoutGst;
+                            }
+                            const isDisabled = isExclusivelyWithGst && g.gstRate === 0;
+                            return (
+                              <div
+                                key={g.id}
+                                style={{ padding: "8px", cursor: isDisabled ? "not-allowed" : "pointer", color: isDisabled ? "#9ca3af" : "inherit" }}
+                                onClick={() => {
+                                  if (isDisabled) return;
+                                  setFormData((p) => ({ ...p, gstMasterId: g.id }));
+                                  setGstSearch(`${g.gstRate}%`);
+                                  setGstOpen(false);
+                                }}
+                              >
+                                {g.gstRate}%{isDisabled ? " (not allowed)" : ""}
+                              </div>
+                            );
+                          })}
+                        {gstRates.filter((g) => `${g.gstRate}%`.toLowerCase().includes((gstSearch || "").toLowerCase())).length === 0 && (
+                          <div style={{ padding: "8px", color: "#999" }}>No results</div>
+                        )}
+                      </div>
+                    )}
+                  </div>
                   <small
                     style={{ color: "#6b7280", fontSize: "12px", marginTop: "4px" }}
                   >
@@ -646,20 +825,102 @@ const BillForm = ({ onFormSubmit, initialInvoice = null, onCancel }) => {
             <div key={index} className="bill-items">
               <div className="bill-item-field"><span className="mobile-label">Sr.</span><span>{index + 1}</span></div>
               <div className="bill-item-field"><span className="mobile-label">Product</span>
-                <select
-                  className={errors[`item_${index}`] ? "input-error" : ""}
-                  value={item.product_id}
-                  onChange={(e) =>
-                    handleItemChange(index, "product_id", e.target.value)
-                  }
-                >
-                  <option value="">Select Product</option>
-                  {products.map((p) => (
-                    <option key={p.id} value={p.id}>
-                      {p.productName || p.name}
-                    </option>
-                  ))}
-                </select>
+                <div style={{ position: "relative" }}>
+                  <input
+                    type="text"
+                    className={errors[`item_${index}`] ? "input-error" : ""}
+                    value={productSearch[index] || ""}
+                    onChange={(e) => {
+                      const next = [...productSearch];
+                      next[index] = e.target.value;
+                      setProductSearch(next);
+                      setProductOpen((prev) => {
+                        const arr = [...prev];
+                        arr[index] = true;
+                        return arr;
+                      });
+                    }}
+                    onFocus={() =>
+                      setProductOpen((prev) => {
+                        const arr = [...prev];
+                        arr[index] = true;
+                        return arr;
+                      })
+                    }
+                    placeholder="Search product..."
+                    autoComplete="off"
+                  />
+                  {productOpen[index] && (
+                    <div
+                      style={{
+                        position: "absolute",
+                        top: "100%",
+                        left: 0,
+                        right: 0,
+                        zIndex: 10,
+                        background: "#fff",
+                        border: "1px solid #ddd",
+                        maxHeight: "200px",
+                        overflowY: "auto",
+                      }}
+                      onMouseDown={(e) => e.preventDefault()}
+                    >
+                      <div
+                        style={{ padding: "8px", color: "#666" }}
+                        onClick={() => {
+                          handleItemChange(index, "product_id", "");
+                          setProductSearch((prev) => {
+                            const arr = [...prev];
+                            arr[index] = "";
+                            return arr;
+                          });
+                          setProductOpen((prev) => {
+                            const arr = [...prev];
+                            arr[index] = false;
+                            return arr;
+                          });
+                        }}
+                      >
+                        Select Product
+                      </div>
+                      {products
+                        .filter((p) => {
+                          const label = p.productName || p.name || "";
+                          return label.toLowerCase().includes(((productSearch[index] || "").toLowerCase()));
+                        })
+                        .map((p) => {
+                          const label = p.productName || p.name;
+                          return (
+                            <div
+                              key={p.id}
+                              style={{ padding: "8px", cursor: "pointer" }}
+                              onClick={() => {
+                                handleItemChange(index, "product_id", String(p.id));
+                                setProductSearch((prev) => {
+                                  const arr = [...prev];
+                                  arr[index] = label;
+                                  return arr;
+                                });
+                                setProductOpen((prev) => {
+                                  const arr = [...prev];
+                                  arr[index] = false;
+                                  return arr;
+                                });
+                              }}
+                            >
+                              {label}
+                            </div>
+                          );
+                        })}
+                      {products.filter((p) => {
+                        const label = p.productName || p.name || "";
+                        return label.toLowerCase().includes(((productSearch[index] || "").toLowerCase()));
+                      }).length === 0 && (
+                        <div style={{ padding: "8px", color: "#999" }}>No results</div>
+                      )}
+                    </div>
+                  )}
+                </div>
               </div>
               <div className="bill-item-field"><span className="mobile-label">HSN Code</span>
                 <input

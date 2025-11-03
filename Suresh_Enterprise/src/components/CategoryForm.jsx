@@ -17,6 +17,8 @@ const CategoryForm = ({ editCategory, onDataUpdate }) => {
       return null;
     }
   });
+  const [companySearch, setCompanySearch] = useState("");
+  const [companyOpen, setCompanyOpen] = useState(false);
   const isCustomer = currentUser?.userType === "Customer User";
 
   useEffect(() => {
@@ -49,6 +51,12 @@ const CategoryForm = ({ editCategory, onDataUpdate }) => {
     }
     setErrors({});
   }, [editCategory]);
+
+  useEffect(() => {
+    const selected = companies.find((c) => String(c.id) === String(companyId));
+    const label = selected ? (selected.companyName || selected.name) : "";
+    setCompanySearch(label);
+  }, [companyId, companies]);
 
   const validateForm = () => {
     const newErrors = {};
@@ -152,18 +160,78 @@ const CategoryForm = ({ editCategory, onDataUpdate }) => {
         {!isCustomer && (
           <label className="form-label">
             Company
-            <select
-              value={companyId}
-              onChange={(e) => setCompanyId(e.target.value)}
-              required
-            >
-              <option value="">-- Select Company --</option>
-              {companies.map((c) => (
-                <option key={c.id} value={c.id}>
-                  {c.companyName || c.name}
-                </option>
-              ))}
-            </select>
+            <div style={{ position: "relative" }}>
+              <input
+                type="text"
+                className={`form-input ${errors.companyId ? "input-error" : ""}`}
+                value={companySearch}
+                onChange={(e) => {
+                  setCompanySearch(e.target.value);
+                  setCompanyOpen(true);
+                }}
+                onFocus={() => setCompanyOpen(true)}
+                placeholder="Search company..."
+                autoComplete="off"
+              />
+              {companyOpen && (
+                <div
+                  style={{
+                    position: "absolute",
+                    top: "100%",
+                    left: 0,
+                    right: 0,
+                    zIndex: 10,
+                    background: "#fff",
+                    border: "1px solid #ddd",
+                    maxHeight: "200px",
+                    overflowY: "auto",
+                  }}
+                  onMouseDown={(e) => e.preventDefault()}
+                >
+                  <div
+                    style={{ padding: "8px", color: "#666" }}
+                    onClick={() => {
+                      setCompanyId("");
+                      setCompanySearch("");
+                      setCompanyOpen(false);
+                    }}
+                  >
+                    -- Select Company --
+                  </div>
+                  {companies
+                    .filter((c) => {
+                      const label = c.companyName || c.name || "";
+                      return label
+                        .toLowerCase()
+                        .includes((companySearch || "").toLowerCase());
+                    })
+                    .map((c) => {
+                      const label = c.companyName || c.name;
+                      return (
+                        <div
+                          key={c.id}
+                          style={{ padding: "8px", cursor: "pointer" }}
+                          onClick={() => {
+                            setCompanyId(String(c.id));
+                            setCompanySearch(label);
+                            setCompanyOpen(false);
+                          }}
+                        >
+                          {label}
+                        </div>
+                      );
+                    })}
+                  {companies.filter((c) => {
+                    const label = c.companyName || c.name || "";
+                    return label
+                      .toLowerCase()
+                      .includes((companySearch || "").toLowerCase());
+                  }).length === 0 && (
+                    <div style={{ padding: "8px", color: "#999" }}>No results</div>
+                  )}
+                </div>
+              )}
+            </div>
             {errors.companyId && <span className="error-message">{errors.companyId}</span>}
           </label>
         )}

@@ -25,6 +25,10 @@ const ProductForm = ({ editProduct, onDataUpdate }) => {
   const [errors, setErrors] = useState({});
   const [categories, setCategories] = useState([]);
   const [companies, setCompanies] = useState([]);
+  const [categorySearch, setCategorySearch] = useState("");
+  const [categoryOpen, setCategoryOpen] = useState(false);
+  const [companySearch, setCompanySearch] = useState("");
+  const [companyOpen, setCompanyOpen] = useState(false);
 
   const [currentUser, setCurrentUser] = useState(() => {
     try {
@@ -85,6 +89,17 @@ const ProductForm = ({ editProduct, onDataUpdate }) => {
     }
     setErrors({});
   }, [editProduct]);
+
+  useEffect(() => {
+    const selected = categories.find((c) => String(c.id) === String(formData.category_id));
+    setCategorySearch(selected ? selected.name : "");
+  }, [formData.category_id, categories]);
+
+  useEffect(() => {
+    const selected = companies.find((c) => String(c.id) === String(formData.company_id));
+    const label = selected ? (selected.companyName || selected.name) : "";
+    setCompanySearch(label);
+  }, [formData.company_id, companies]);
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -252,37 +267,138 @@ const ProductForm = ({ editProduct, onDataUpdate }) => {
 
         <label>
           Category
-          <select
-            name="category_id"
-            value={formData.category_id}
-            onChange={handleChange}
-          >
-            <option value="">-- Select Category --</option>
-            {categories.map((cat) => (
-              <option key={cat.id} value={cat.id}>
-                {cat.name}
-              </option>
-            ))}
-          </select>
+          <div style={{ position: "relative" }}>
+            <input
+              type="text"
+              className={""}
+              value={categorySearch}
+              onChange={(e) => {
+                setCategorySearch(e.target.value);
+                setCategoryOpen(true);
+              }}
+              onFocus={() => setCategoryOpen(true)}
+              placeholder="Search category..."
+              autoComplete="off"
+            />
+            {categoryOpen && (
+              <div
+                style={{
+                  position: "absolute",
+                  top: "100%",
+                  left: 0,
+                  right: 0,
+                  zIndex: 10,
+                  background: "#fff",
+                  border: "1px solid #ddd",
+                  maxHeight: "200px",
+                  overflowY: "auto",
+                }}
+                onMouseDown={(e) => e.preventDefault()}
+              >
+                <div
+                  style={{ padding: "8px", color: "#666" }}
+                  onClick={() => {
+                    setFormData((p) => ({ ...p, category_id: "" }));
+                    setCategorySearch("");
+                    setCategoryOpen(false);
+                  }}
+                >
+                  -- Select Category --
+                </div>
+                {categories
+                  .filter((cat) => (cat.name || "").toLowerCase().includes((categorySearch || "").toLowerCase()))
+                  .map((cat) => (
+                    <div
+                      key={cat.id}
+                      style={{ padding: "8px", cursor: "pointer" }}
+                      onClick={() => {
+                        setFormData((p) => ({ ...p, category_id: String(cat.id) }));
+                        setCategorySearch(cat.name);
+                        setCategoryOpen(false);
+                      }}
+                    >
+                      {cat.name}
+                    </div>
+                  ))}
+                {categories.filter((cat) => (cat.name || "").toLowerCase().includes((categorySearch || "").toLowerCase())).length === 0 && (
+                  <div style={{ padding: "8px", color: "#999" }}>No results</div>
+                )}
+              </div>
+            )}
+          </div>
         </label>
 
         {!isCustomer && (
           <label>
             Company
-            <select
-              name="company_id"
-              className={errors.company_id ? "input-error" : ""}
-              value={formData.company_id}
-              onChange={handleChange}
-              required
-            >
-              <option value="">-- Select Company --</option>
-              {companies.map((c) => (
-                <option key={c.id} value={c.id}>
-                  {c.companyName || c.name}
-                </option>
-              ))}
-            </select>
+            <div style={{ position: "relative" }}>
+              <input
+                type="text"
+                className={errors.company_id ? "input-error" : ""}
+                value={companySearch}
+                onChange={(e) => {
+                  setCompanySearch(e.target.value);
+                  setCompanyOpen(true);
+                }}
+                onFocus={() => setCompanyOpen(true)}
+                placeholder="Search company..."
+                autoComplete="off"
+              />
+              {companyOpen && (
+                <div
+                  style={{
+                    position: "absolute",
+                    top: "100%",
+                    left: 0,
+                    right: 0,
+                    zIndex: 10,
+                    background: "#fff",
+                    border: "1px solid #ddd",
+                    maxHeight: "200px",
+                    overflowY: "auto",
+                  }}
+                  onMouseDown={(e) => e.preventDefault()}
+                >
+                  <div
+                    style={{ padding: "8px", color: "#666" }}
+                    onClick={() => {
+                      setFormData((p) => ({ ...p, company_id: "" }));
+                      setCompanySearch("");
+                      setCompanyOpen(false);
+                    }}
+                  >
+                    -- Select Company --
+                  </div>
+                  {companies
+                    .filter((c) => {
+                      const label = c.companyName || c.name || "";
+                      return label.toLowerCase().includes((companySearch || "").toLowerCase());
+                    })
+                    .map((c) => {
+                      const label = c.companyName || c.name;
+                      return (
+                        <div
+                          key={c.id}
+                          style={{ padding: "8px", cursor: "pointer" }}
+                          onClick={() => {
+                            setFormData((p) => ({ ...p, company_id: String(c.id) }));
+                            setCompanySearch(label);
+                            setCompanyOpen(false);
+                          }}
+                        >
+                          {label}
+                        </div>
+                      );
+                    })}
+                  {companies.filter((c) => {
+                    const label = c.companyName || c.name || "";
+                    return label.toLowerCase().includes((companySearch || "").toLowerCase());
+                  }).length === 0 && (
+                    <div style={{ padding: "8px", color: "#999" }}>No results</div>
+                  )}
+                </div>
+              )}
+            </div>
             {errors.company_id && (
               <small className="error-message">{errors.company_id}</small>
             )}

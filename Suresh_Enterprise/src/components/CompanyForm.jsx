@@ -55,6 +55,14 @@ const CompanyForm = ({ editCompany, onDataUpdate }) => {
       return null;
     }
   });
+  const [gstSearch, setGstSearch] = useState("");
+  const [gstOpen, setGstOpen] = useState(false);
+  const [countrySearch, setCountrySearch] = useState("");
+  const [countryOpen, setCountryOpen] = useState(false);
+  const [stateSearch, setStateSearch] = useState("");
+  const [stateOpen, setStateOpen] = useState(false);
+  const [citySearch, setCitySearch] = useState("");
+  const [cityOpen, setCityOpen] = useState(false);
 
   useEffect(() => {
     const fetchGstRates = async () => {
@@ -106,6 +114,23 @@ const CompanyForm = ({ editCompany, onDataUpdate }) => {
     }
     setErrors({});
   }, [editCompany]);
+
+  useEffect(() => {
+    const gst = gstRates.find((g) => String(g.id) === String(formData.gstMasterId));
+    setGstSearch(gst ? `${gst.gstRate}%` : "");
+  }, [formData.gstMasterId, gstRates]);
+
+  useEffect(() => {
+    setCountrySearch(formData.country || "");
+  }, [formData.country]);
+
+  useEffect(() => {
+    setStateSearch(formData.state || "");
+  }, [formData.state, states]);
+
+  useEffect(() => {
+    setCitySearch(formData.city || "");
+  }, [formData.city, cities]);
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -373,18 +398,54 @@ const CompanyForm = ({ editCompany, onDataUpdate }) => {
           </label>
           <label>
             GST Rate
-            <select
-              name="gstMasterId"
-              value={formData.gstMasterId}
-              onChange={handleChange}
-              required
-            >
-              {gstRates.map((gst) => (
-                <option key={gst.id} value={gst.id}>
-                  {gst.gstRate}%
-                </option>
-              ))}
-            </select>
+            <div style={{ position: "relative" }}>
+              <input
+                type="text"
+                value={gstSearch}
+                onChange={(e) => {
+                  setGstSearch(e.target.value);
+                  setGstOpen(true);
+                }}
+                onFocus={() => setGstOpen(true)}
+                placeholder="Search GST rate..."
+                autoComplete="off"
+              />
+              {gstOpen && (
+                <div
+                  style={{
+                    position: "absolute",
+                    top: "100%",
+                    left: 0,
+                    right: 0,
+                    zIndex: 10,
+                    background: "#fff",
+                    border: "1px solid #ddd",
+                    maxHeight: "200px",
+                    overflowY: "auto",
+                  }}
+                  onMouseDown={(e) => e.preventDefault()}
+                >
+                  {gstRates
+                    .filter((g) => `${g.gstRate}%`.toLowerCase().includes((gstSearch || "").toLowerCase()))
+                    .map((g) => (
+                      <div
+                        key={g.id}
+                        style={{ padding: "8px", cursor: "pointer" }}
+                        onClick={() => {
+                          setFormData((p) => ({ ...p, gstMasterId: g.id }));
+                          setGstSearch(`${g.gstRate}%`);
+                          setGstOpen(false);
+                        }}
+                      >
+                        {g.gstRate}%
+                      </div>
+                    ))}
+                  {gstRates.filter((g) => `${g.gstRate}%`.toLowerCase().includes((gstSearch || "").toLowerCase())).length === 0 && (
+                    <div style={{ padding: "8px", color: "#999" }}>No results</div>
+                  )}
+                </div>
+              )}
+            </div>
           </label>
         </fieldset>
 
@@ -453,59 +514,205 @@ const CompanyForm = ({ editCompany, onDataUpdate }) => {
           </label>
           <label>
             Country
-            <select
-              name="country"
-              className={errors.country ? "input-error" : ""}
-              value={formData.country}
-              onChange={handleChange}
-            >
-              <option value="">Select Country</option>
-              {Object.keys(countryData).map((c) => (
-                <option key={c} value={c}>
-                  {c}
-                </option>
-              ))}
-            </select>
+            <div style={{ position: "relative" }}>
+              <input
+                type="text"
+                className={errors.country ? "input-error" : ""}
+                value={countrySearch}
+                onChange={(e) => {
+                  setCountrySearch(e.target.value);
+                  setCountryOpen(true);
+                }}
+                onFocus={() => setCountryOpen(true)}
+                placeholder="Search country..."
+                autoComplete="off"
+              />
+              {countryOpen && (
+                <div
+                  style={{
+                    position: "absolute",
+                    top: "100%",
+                    left: 0,
+                    right: 0,
+                    zIndex: 10,
+                    background: "#fff",
+                    border: "1px solid #ddd",
+                    maxHeight: "200px",
+                    overflowY: "auto",
+                  }}
+                  onMouseDown={(e) => e.preventDefault()}
+                >
+                  <div
+                    style={{ padding: "8px", color: "#666" }}
+                    onClick={() => {
+                      setFormData((p) => ({ ...p, country: "", state: "", city: "" }));
+                      setStates([]);
+                      setCities([]);
+                      setCountrySearch("");
+                      setCountryOpen(false);
+                    }}
+                  >
+                    Select Country
+                  </div>
+                  {Object.keys(countryData)
+                    .filter((c) => c.toLowerCase().includes((countrySearch || "").toLowerCase()))
+                    .map((c) => (
+                      <div
+                        key={c}
+                        style={{ padding: "8px", cursor: "pointer" }}
+                        onClick={() => {
+                          const newStates = Object.keys(countryData[c]?.states || {});
+                          setStates(newStates);
+                          setCities([]);
+                          setFormData((p) => ({ ...p, country: c, state: "", city: "" }));
+                          setCountrySearch(c);
+                          setCountryOpen(false);
+                        }}
+                      >
+                        {c}
+                      </div>
+                    ))}
+                  {Object.keys(countryData).filter((c) => c.toLowerCase().includes((countrySearch || "").toLowerCase())).length === 0 && (
+                    <div style={{ padding: "8px", color: "#999" }}>No results</div>
+                  )}
+                </div>
+              )}
+            </div>
             {errors.country && (
               <small className="error-message">{errors.country}</small>
             )}
           </label>
           <label>
             State
-            <select
-              name="state"
-              className={errors.state ? "input-error" : ""}
-              value={formData.state}
-              onChange={handleChange}
-              disabled={!states.length}
-            >
-              <option value="">Select State</option>
-              {states.map((s) => (
-                <option key={s} value={s}>
-                  {s}
-                </option>
-              ))}
-            </select>
+            <div style={{ position: "relative" }}>
+              <input
+                type="text"
+                className={errors.state ? "input-error" : ""}
+                value={stateSearch}
+                onChange={(e) => {
+                  setStateSearch(e.target.value);
+                  setStateOpen(true);
+                }}
+                onFocus={() => setStateOpen(true)}
+                placeholder={!states.length ? "Select country first" : "Search state..."}
+                autoComplete="off"
+                disabled={!states.length}
+              />
+              {stateOpen && !!states.length && (
+                <div
+                  style={{
+                    position: "absolute",
+                    top: "100%",
+                    left: 0,
+                    right: 0,
+                    zIndex: 10,
+                    background: "#fff",
+                    border: "1px solid #ddd",
+                    maxHeight: "200px",
+                    overflowY: "auto",
+                  }}
+                  onMouseDown={(e) => e.preventDefault()}
+                >
+                  <div
+                    style={{ padding: "8px", color: "#666" }}
+                    onClick={() => {
+                      setFormData((p) => ({ ...p, state: "", city: "" }));
+                      setCities([]);
+                      setStateSearch("");
+                      setStateOpen(false);
+                    }}
+                  >
+                    Select State
+                  </div>
+                  {states
+                    .filter((s) => s.toLowerCase().includes((stateSearch || "").toLowerCase()))
+                    .map((s) => (
+                      <div
+                        key={s}
+                        style={{ padding: "8px", cursor: "pointer" }}
+                        onClick={() => {
+                          const newCities = countryData[formData.country]?.states[s] || [];
+                          setCities(newCities);
+                          setFormData((p) => ({ ...p, state: s, city: "" }));
+                          setStateSearch(s);
+                          setStateOpen(false);
+                        }}
+                      >
+                        {s}
+                      </div>
+                    ))}
+                  {states.filter((s) => s.toLowerCase().includes((stateSearch || "").toLowerCase())).length === 0 && (
+                    <div style={{ padding: "8px", color: "#999" }}>No results</div>
+                  )}
+                </div>
+              )}
+            </div>
             {errors.state && (
               <small className="error-message">{errors.state}</small>
             )}
           </label>
           <label>
             City
-            <select
-              name="city"
-              className={errors.city ? "input-error" : ""}
-              value={formData.city}
-              onChange={handleChange}
-              disabled={!cities.length}
-            >
-              <option value="">Select City</option>
-              {cities.map((c) => (
-                <option key={c} value={c}>
-                  {c}
-                </option>
-              ))}
-            </select>
+            <div style={{ position: "relative" }}>
+              <input
+                type="text"
+                className={errors.city ? "input-error" : ""}
+                value={citySearch}
+                onChange={(e) => {
+                  setCitySearch(e.target.value);
+                  setCityOpen(true);
+                }}
+                onFocus={() => setCityOpen(true)}
+                placeholder={!cities.length ? "Select state first" : "Search city..."}
+                autoComplete="off"
+                disabled={!cities.length}
+              />
+              {cityOpen && !!cities.length && (
+                <div
+                  style={{
+                    position: "absolute",
+                    top: "100%",
+                    left: 0,
+                    right: 0,
+                    zIndex: 10,
+                    background: "#fff",
+                    border: "1px solid #ddd",
+                    maxHeight: "200px",
+                    overflowY: "auto",
+                  }}
+                  onMouseDown={(e) => e.preventDefault()}
+                >
+                  <div
+                    style={{ padding: "8px", color: "#666" }}
+                    onClick={() => {
+                      setFormData((p) => ({ ...p, city: "" }));
+                      setCitySearch("");
+                      setCityOpen(false);
+                    }}
+                  >
+                    Select City
+                  </div>
+                  {cities
+                    .filter((c) => c.toLowerCase().includes((citySearch || "").toLowerCase()))
+                    .map((c) => (
+                      <div
+                        key={c}
+                        style={{ padding: "8px", cursor: "pointer" }}
+                        onClick={() => {
+                          setFormData((p) => ({ ...p, city: c }));
+                          setCitySearch(c);
+                          setCityOpen(false);
+                        }}
+                      >
+                        {c}
+                      </div>
+                    ))}
+                  {cities.filter((c) => c.toLowerCase().includes((citySearch || "").toLowerCase())).length === 0 && (
+                    <div style={{ padding: "8px", color: "#999" }}>No results</div>
+                  )}
+                </div>
+              )}
+            </div>
             {errors.city && (
               <small className="error-message">{errors.city}</small>
             )}
