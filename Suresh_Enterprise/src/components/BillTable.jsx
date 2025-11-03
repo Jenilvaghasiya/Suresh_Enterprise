@@ -47,7 +47,7 @@ const BillTable = ({ refreshTrigger, onEdit }) => {
   // API call to get all invoices (for Admin)
   const getAllInvoices = async () => {
     try {
-      const response = await fetch("http://localhost:3000/api/invoices");
+      const response = await fetch("https://suresh-enterprice-app.onrender.com/api/invoices");
       if (!response.ok) {
         throw new Error("Failed to fetch all invoices");
       }
