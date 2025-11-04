@@ -1,0 +1,204 @@
+/* IGNITE Payment Page Styles */
+
+.payment-container {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 24px;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+/* Header Styles */
+.payment-header {
+  margin-bottom: 32px;
+}
+
+.payment-title {
+  font-size: 28px;
+  font-weight: 700;
+  color: #165638;
+  margin: 0 0 8px 0;
+}
+
+.payment-subtitle {
+  color: #6b7280;
+  margin: 0;
+  font-size: 14px;
+}
+
+/* Error Alert */
+.payment-error {
+  background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
+  border: 1px solid #f87171;
+  border-radius: 12px;
+  padding: 14px 16px;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  box-shadow: 0 2px 8px rgba(248, 113, 113, 0.15);
+}
+
+.payment-error-icon {
+  font-size: 20px;
+}
+
+.payment-error-text {
+  color: #991b1b;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+/* Balance Card */
+.payment-balance-card {
+  background: linear-gradient(135deg, #ffffff 0%, #f9fafb 100%);
+  border: 2px solid #e5e7eb;
+  border-radius: 16px;
+  padding: 24px;
+  margin-bottom: 24px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+}
+
+/* Form Card */
+.payment-form-card {
+  background: #ffffff;
+  border: 2px solid #e5e7eb;
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+}
+
+/* Grid Layout */
+.payment-grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.payment-grid-full {
+  grid-column: 1 / -1;
+}
+
+/* Form Labels */
+.payment-label {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  color: #374151;
+  margin-bottom: 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Input Fields */
+.payment-input,
+.payment-select,
+.payment-textarea {
+  width: 100%;
+  padding: 12px 14px;
+  border: 2px solid #d1d5db;
+  border-radius: 10px;
+  font-size: 15px;
+  color: #1f2937;
+  background: #ffffff;
+  transition: all 0.2s ease;
+  outline: none;
+  font-family: inherit;
+}
+
+.payment-input:focus,
+.payment-select:focus,
+.payment-textarea:focus {
+  border-color: #165638;
+  box-shadow: 0 0 0 3px rgba(22, 86, 56, 0.1);
+}
+
+.payment-select {
+  cursor: pointer;
+}
+
+.payment-textarea {
+  resize: vertical;
+  min-height: 80px;
+}
+
+/* Balance Display */
+.payment-balance-display {
+  width: 100%;
+  padding: 12px 14px;
+  border: 2px solid #d1d5db;
+  border-radius: 10px;
+  font-size: 18px;
+  font-weight: 700;
+  color: #165638;
+  background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
+}
+
+/* Button Container */
+.payment-button-container {
+  display: flex;
+  gap: 12px;
+  padding-top: 16px;
+  border-top: 2px solid #e5e7eb;
+  margin-top: 24px;
+}
+
+/* Buttons */
+.payment-btn {
+  flex: 1;
+  padding: 14px 20px;
+  border: none;
+  border-radius: 10px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #ffffff;
+}
+
+.payment-btn-primary {
+  background: linear-gradient(135deg, #165638 0%, #1e7e34 100%);
+  box-shadow: 0 4px 12px rgba(22, 86, 56, 0.3);
+}
+
+.payment-btn-primary:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(22, 86, 56, 0.4);
+}
+
+.payment-btn-secondary {
+  background: linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%);
+  box-shadow: 0 4px 12px rgba(14, 165, 233, 0.3);
+}
+
+.payment-btn-secondary:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(14, 165, 233, 0.4);
+}
+
+.payment-btn:disabled {
+  background: #9ca3af;
+  cursor: not-allowed;
+  box-shadow: none;
+  transform: none;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .payment-grid-2 {
+    grid-template-columns: 1fr;
+  }
+  
+  .payment-button-container {
+    flex-direction: column;
+  }
+  
+  .payment-container {
+    padding: 16px;
+  }
+  
+  .payment-title {
+    font-size: 24px;
+  }
+}

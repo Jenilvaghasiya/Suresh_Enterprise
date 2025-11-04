@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import "../styles/CustomerTable.css";
-import { getCustomers, deleteCustomer, getCompanies, safeApiCall } from "../services/api";
+import { getCustomers, deleteCustomer, getCompanies, safeApiCall, getCustomerBalance } from "../services/api";
+import { useNavigate } from "react-router-dom";
 import { toast } from "../utils/toast";
 import Loader from "./Loader";
 import ConfirmModal from "./ConfirmModal";
@@ -24,6 +25,8 @@ const CustomerTable = ({ onEditClick, refreshTrigger }) => {
       return null;
     }
   });
+  const [balancesByCustomerId, setBalancesByCustomerId] = useState({});
+  const navigate = useNavigate();
 
   const isCustomer = currentUser?.userType === "Customer User";
 
@@ -123,6 +126,32 @@ const CustomerTable = ({ onEditClick, refreshTrigger }) => {
   const currentCustomers = filteredCustomers.slice(indexOfFirstItem, indexOfLastItem);
   const totalPages = Math.ceil(filteredCustomers.length / itemsPerPage);
 
+  // Fetch balances for the customers on the current page
+  useEffect(() => {
+    const loadBalances = async () => {
+      const slice = filteredCustomers.slice(indexOfFirstItem, indexOfLastItem);
+      const missing = slice.filter((c) => balancesByCustomerId[c.id] === undefined);
+      if (missing.length === 0) return;
+      const entries = await Promise.all(
+        missing.map(async (c) => {
+          const [res] = await safeApiCall(getCustomerBalance, c.id);
+          return [c.id, res?.data?.currentBalance ?? 0];
+        })
+      );
+      const patch = { ...balancesByCustomerId };
+      entries.forEach(([id, bal]) => { patch[id] = bal; });
+      setBalancesByCustomerId(patch);
+    };
+    loadBalances();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentPage, filteredCustomers.length]);
+
+  const handleMakePayment = (customer) => {
+    navigate(`/payments/new?customerId=${customer.id}`);
+  };
+
+  
+
   const handlePageChange = (pageNumber) => {
     setCurrentPage(pageNumber);
   };
@@ -162,8 +191,7 @@ const CustomerTable = ({ onEditClick, refreshTrigger }) => {
             <th>Email Address</th>
             <th>Billing Address</th>
             <th>Shipping Address</th>
-            <th>Opening Balance</th>
-            <th>Opening Date</th>
+            <th>Current Balance</th>
             {!isCustomer && <th>Company</th>}
             <th>Status</th>
             <th>Actions</th>
@@ -180,8 +208,7 @@ const CustomerTable = ({ onEditClick, refreshTrigger }) => {
                 <td data-label="Email Address">{cust.emailAddress || "-"}</td>
                 <td data-label="Billing Address">{cust.billingAddress || "-"}</td>
                 <td data-label="Shipping Address">{cust.shippingAddress || "-"}</td>
-                <td data-label="Opening Balance">₹{Number(cust.openingBalance || 0).toFixed(2)}</td>
-                <td data-label="Opening Date">{formatDate(cust.openingDate)}</td>
+                <td data-label="Current Balance">₹{Number(balancesByCustomerId[cust.id] ?? 0).toFixed(2)}</td>
                 {!isCustomer && (
                   <td data-label="Company">{companyNameById[cust.company_id] || cust.company_id}</td>
                 )}
@@ -194,6 +221,12 @@ const CustomerTable = ({ onEditClick, refreshTrigger }) => {
                     Edit
                   </button>
                   <button
+                    className="customer-edit-button"
+                    onClick={() => handleMakePayment(cust)}
+                  >
+                    Make Payment
+                  </button>
+                  <button
                     className="customer-delete-button"
                     onClick={() => handleDeleteClick(cust)}
                   >
@@ -204,7 +237,7 @@ const CustomerTable = ({ onEditClick, refreshTrigger }) => {
             ))
           ) : (
             <tr>
-              <td colSpan={isCustomer ? 11 : 12}>No customers found</td>
+              <td colSpan={isCustomer ? 10 : 11}>No customers found</td>
             </tr>
           )}
         </tbody>

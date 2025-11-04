@@ -35,6 +35,8 @@ const Invoices = sequelize.define(
     igstAmount: { type: DataTypes.DECIMAL(10, 2), defaultValue: 0 },
     gst: { type: DataTypes.TINYINT, allowNull: false, defaultValue: 0, comment: "0 = no GST, 1 = GST applied" },
     billValue: { type: DataTypes.DECIMAL(10, 2), defaultValue: 0 },
+    totalAmount: { type: DataTypes.DECIMAL(10, 2), defaultValue: 0, comment: "Alias of billValue for reporting" },
+    paidAmount: { type: DataTypes.DECIMAL(10, 2), defaultValue: 0 },
     isActive: { type: DataTypes.BOOLEAN, defaultValue: true },
   },
   {

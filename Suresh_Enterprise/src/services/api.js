@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API_BASE_URL = import.meta.env?.VITE_API_URL || "https://suresh-enterprice-app.onrender.com/api";
+const API_BASE_URL = import.meta.env?.VITE_API_URL || "http://localhost:3000/api";
 export const API_ORIGIN = API_BASE_URL.replace(/\/api\/?$/, "");
 
 const API = axios.create({
@@ -67,3 +67,9 @@ export const addUser = (data) => API.post("/users", data);
 export const getUsers = () => API.get("/users");
 export const updateUser = (id, data) => API.patch(`/users/${id}`, data);
 export const deleteUser = (id) => API.delete(`/users/${id}`);
+
+// Payments
+export const addPayment = (data) => API.post("/payments", data);
+export const getPaymentsByCustomer = (customerId) => API.get(`/payments/customer/${customerId}`);
+export const getCustomerBalance = (customerId) => API.get(`/payments/balance/${customerId}`);
+export const createRazorpayOrder = (data) => API.post("/payments/razorpay/order", data);

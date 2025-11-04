@@ -10,6 +10,7 @@ import BillPage from "./components/BillPage";
 import UserPage from "./components/UserPage";
 import LoginPage from './components/LoginPage';
 import DashboardPage from "./components/DashboardPage";
+import PaymentPage from "./components/PaymentPage";
 import "./App.css";
 
 function App() {
@@ -134,6 +135,14 @@ function App() {
               element={
                 <ProtectedRoute>
                   <BillPage />
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/payments/new" 
+              element={
+                <ProtectedRoute>
+                  <PaymentPage />
                 </ProtectedRoute>
               } 
             />

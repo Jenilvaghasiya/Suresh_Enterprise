@@ -40,6 +40,8 @@ app.use("/api/gstMasters", gstMasterRoutes);
 app.use("/api/companyProfiles", companyProfileRoutes);
 app.use("/api/invoices", invoiceRoutes);
 app.use('/api/users', userRoutes);
+const paymentRoutes = require('./routes/paymentRoutes');
+app.use('/api/payments', paymentRoutes);
 
 
 app.use((err, req, res, next) => {

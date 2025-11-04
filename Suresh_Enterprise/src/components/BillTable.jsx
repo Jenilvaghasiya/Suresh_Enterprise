@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useRef } from "react";
 import {
+  getInvoices,
   getInvoicesByUserId,
   getProducts,
   getCustomers,
@@ -44,18 +45,9 @@ const BillTable = ({ refreshTrigger, onEdit }) => {
     }
   };
 
-  // API call to get all invoices (for Admin)
+  // API call to get all invoices (for Admin) using axios helper (sends credentials)
   const getAllInvoices = async () => {
-    try {
-      const response = await fetch("https://suresh-enterprice-app.onrender.com/api/invoices");
-      if (!response.ok) {
-        throw new Error("Failed to fetch all invoices");
-      }
-      const data = await response.json();
-      return [data, null];
-    } catch (error) {
-      return [null, error];
-    }
+    return await safeApiCall(getInvoices);
   };
 
   useEffect(() => {
