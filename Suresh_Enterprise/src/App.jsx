@@ -9,6 +9,7 @@ import GstMasterPage from "./components/GstMasterPage";
 import BillPage from "./components/BillPage";
 import UserPage from "./components/UserPage";
 import LoginPage from './components/LoginPage';
+import DashboardPage from "./components/DashboardPage";
 import "./App.css";
 
 function App() {
@@ -74,6 +75,14 @@ function App() {
         {isAuthenticated && <SideBar user={user} onLogout={handleLogout} />}
         <main className={isAuthenticated ? "main-content" : "main-content-full"}>
           <Routes>
+            <Route 
+              path="/dashboard" 
+              element={
+                <ProtectedRoute>
+                  <DashboardPage />
+                </ProtectedRoute>
+              } 
+            />
             <Route 
               path="/login" 
               element={

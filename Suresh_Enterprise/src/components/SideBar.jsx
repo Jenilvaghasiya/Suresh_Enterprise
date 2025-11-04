@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
+  faGauge,
   faTag,
   faBox,
   faUsers,
@@ -75,6 +76,7 @@ const SideBar = ({ user, onLogout }) => {
   };
 
   const navItems = [
+    { to: "/dashboard", icon: faGauge, text: "Dashboard" },
     { to: "/", icon: faTag, text: "Category" },
     { to: "/products", icon: faBox, text: "Product" },
     { to: "/customers", icon: faUsers, text: "Customer" },
