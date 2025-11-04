@@ -645,7 +645,7 @@ const PaymentPage = () => {
               </span>
             )}
           </button>
-          <button
+          {/* <button
             type="button"
             onClick={handleRazorpay}
             disabled={submitting}
@@ -674,7 +674,7 @@ const PaymentPage = () => {
                 Pay Online (Razorpay)
               </span>
             )}
-          </button>
+          </button> */}
         </div>
       </form>
     </div>

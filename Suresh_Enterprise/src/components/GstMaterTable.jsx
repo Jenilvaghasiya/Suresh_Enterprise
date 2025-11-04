@@ -132,7 +132,7 @@ const GstMasterTable = ({ onEditClick, refreshTrigger }) => {
                   <td data-label="SGST Rate">{gst.sgstRate}%</td>
                   <td data-label="CGST Rate">{gst.cgstRate}%</td>
                   <td data-label="IGST Rate">{gst.igstRate}%</td>
-                  <td data-label="Active">{gst.isActive ? "Yes" : "No"}</td>
+                  <td data-label="Status">{gst.isActive ? "Active" : "Inactive"}</td>
                   <td data-label="Actions">
                     <button
                       className="gst-edit-button"

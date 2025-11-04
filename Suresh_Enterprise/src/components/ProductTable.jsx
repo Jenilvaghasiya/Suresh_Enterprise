@@ -169,7 +169,7 @@ const ProductTable = ({ onEditClick, refreshTrigger }) => {
                 {!isCustomer && (
                   <td data-label="Company">{companyNameById[prod.company_id] || prod.company_id}</td>
                 )}
-                <td data-label="Active">{prod.isActive ? "Yes" : "No"}</td>
+                <td data-label="Status">{prod.isActive ? "Active" : "Inactive"}</td>
                 <td data-label="Actions">
                   <button
                     className="product-edit-button"

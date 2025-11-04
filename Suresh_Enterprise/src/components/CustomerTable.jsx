@@ -212,7 +212,7 @@ const CustomerTable = ({ onEditClick, refreshTrigger }) => {
                 {!isCustomer && (
                   <td data-label="Company">{companyNameById[cust.company_id] || cust.company_id}</td>
                 )}
-                <td data-label="Active">{cust.isActive ? "Yes" : "No"}</td>
+                <td data-label="Status">{cust.isActive ? "Active" : "Inactive"}</td>
                 <td data-label="Actions">
                   <button
                     className="customer-edit-button"

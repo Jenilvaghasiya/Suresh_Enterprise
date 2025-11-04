@@ -210,6 +210,9 @@ const BillTable = ({ refreshTrigger, onEdit }) => {
     setCurrentPage(1);
   };
 
+  const isAdmin = currentUser?.userType === "Admin User";
+  const showCompanyColumn = isAdmin;
+
   if (loading) return <Loader />;
 
   return (
@@ -245,7 +248,7 @@ const BillTable = ({ refreshTrigger, onEdit }) => {
               <th>Sr No</th>
               <th>Invoice Number</th>
               <th>Customer Name</th>
-              <th>Company Name</th>
+              {showCompanyColumn && <th>Company Name</th>}
               <th>Bill Date</th>
               <th>Deliver At</th>
               <th>Transport</th>
@@ -268,7 +271,9 @@ const BillTable = ({ refreshTrigger, onEdit }) => {
                     <td data-label="Sr No">{serial}</td>
                     <td data-label="Invoice No">{formatBillNoAdmin(invoice)}</td>
                     <td data-label="Customer">{invoice.Customer?.customerName || "N/A"}</td>
-                    <td data-label="Company">{invoice.CompanyProfile?.companyName || "N/A"}</td>
+                    {showCompanyColumn && (
+                      <td data-label="Company">{invoice.CompanyProfile?.companyName || "N/A"}</td>
+                    )}
                     <td data-label="Bill Date">
                       {invoice.billDate
                         ? new Date(invoice.billDate).toLocaleDateString("en-GB")
@@ -281,7 +286,7 @@ const BillTable = ({ refreshTrigger, onEdit }) => {
                     <td data-label="SGST">₹{totals.sgstAmount}</td>
                     <td data-label="CGST">₹{totals.cgstAmount}</td>
                     <td data-label="IGST">₹{totals.igstAmount}</td>
-                    <td data-label="Active">{invoice.isActive ? "Yes" : "No"}</td>
+                    <td data-label="Status">{invoice.isActive ? "Active" : "Inactive"}</td>
                     <td data-label="Actions" className="action-buttons">
                       <button
                         className="bill-generate-btn"
@@ -319,7 +324,7 @@ const BillTable = ({ refreshTrigger, onEdit }) => {
               })
             ) : (
               <tr>
-                <td colSpan={14}>No invoices found.</td>
+                <td colSpan={showCompanyColumn ? 14 : 13}>No invoices found.</td>
               </tr>
             )}
           </tbody>

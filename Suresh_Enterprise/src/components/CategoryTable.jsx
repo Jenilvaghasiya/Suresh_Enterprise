@@ -149,7 +149,7 @@ const CategoryTable = ({ onEditClick, refreshTrigger, searchQuery }) => {
                 {!isCustomer && (
                   <td data-label="Company">{companyNameById[cat.company_id] || cat.company_id}</td>
                 )}
-                <td data-label="Active">{cat.isActive ? "Yes" : "No"}</td>
+                <td data-label="Status">{cat.isActive ? "Active" : "Inactive"}</td>
                 <td data-label="Actions">
                   <button
                     className="category-edit-button"

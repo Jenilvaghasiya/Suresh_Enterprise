@@ -205,7 +205,7 @@ const CompanyTable = ({ onEditClick, refreshTrigger }) => {
                     ? `${getGstRate(c.gstMasterId)}%`
                     : "-"}
                 </td>
-                <td data-label="Active">{c.isActive ? "Yes" : "No"}</td>
+                <td data-label="Status">{c.isActive ? "Active" : "Inactive"}</td>
                 <td data-label="Actions">
                   <button
                     className="company-edit-button"
