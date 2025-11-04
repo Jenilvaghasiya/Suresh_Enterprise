@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import '../styles/PaymentPage.css';
 import { safeApiCall, getCustomers, getCustomerBalance, addPayment, createRazorpayOrder, getInvoicesByCompanyId, getInvoicesByUserId } from "../services/api";
+import { AlertTriangle, Save, CreditCard } from "lucide-react";
 
 const useQuery = () => new URLSearchParams(useLocation().search);
 
@@ -280,7 +281,7 @@ const PaymentPage = () => {
           gap: 12,
           boxShadow: "0 2px 8px rgba(248, 113, 113, 0.15)"
         }}>
-          <span style={{ fontSize: 20 }}>⚠️</span>
+          <AlertTriangle size={20} color="#991b1b" aria-hidden="true" />
           <span style={{ color: "#991b1b", fontSize: 14, fontWeight: 500 }}>{error}</span>
         </div>
       )}
@@ -637,7 +638,12 @@ const PaymentPage = () => {
             onMouseEnter={(e) => !submitting && (e.target.style.transform = "translateY(-2px)", e.target.style.boxShadow = "0 6px 16px rgba(22, 86, 56, 0.4)")}
             onMouseLeave={(e) => !submitting && (e.target.style.transform = "translateY(0)", e.target.style.boxShadow = "0 4px 12px rgba(22, 86, 56, 0.3)")}
           >
-            {submitting ? "Processing..." : "💾 Save Payment"}
+            {submitting ? "Processing..." : (
+              <span style={{ display: "inline-flex", alignItems: "center", gap: 8 }}>
+                <Save size={18} aria-hidden="true" />
+                Save Payment
+              </span>
+            )}
           </button>
           <button
             type="button"
@@ -662,7 +668,12 @@ const PaymentPage = () => {
             onMouseEnter={(e) => !submitting && (e.target.style.transform = "translateY(-2px)", e.target.style.boxShadow = "0 6px 16px rgba(14, 165, 233, 0.4)")}
             onMouseLeave={(e) => !submitting && (e.target.style.transform = "translateY(0)", e.target.style.boxShadow = "0 4px 12px rgba(14, 165, 233, 0.3)")}
           >
-            {submitting ? "Processing..." : "💳 Pay Online (Razorpay)"}
+            {submitting ? "Processing..." : (
+              <span style={{ display: "inline-flex", alignItems: "center", gap: 8 }}>
+                <CreditCard size={18} aria-hidden="true" />
+                Pay Online (Razorpay)
+              </span>
+            )}
           </button>
         </div>
       </form>
