@@ -75,12 +75,12 @@ const SideBar = ({ user, onLogout }) => {
   };
 
   const navItems = [
-    { to: "/", icon: faTag, text: "Add Category" },
-    { to: "/products", icon: faBox, text: "Add Product" },
-    { to: "/customers", icon: faUsers, text: "Add Customer" },
+    { to: "/", icon: faTag, text: "Category" },
+    { to: "/products", icon: faBox, text: "Product" },
+    { to: "/customers", icon: faUsers, text: "Customer" },
     { to: "/gst-masters", icon: faFileInvoiceDollar, text: "GST Master" },
     { to: "/companies", icon: faBuilding, text: "Company Profile" },
-    { to: "/invoice-form", icon: faFileInvoice, text: "Generate Invoice" },
+    { to: "/invoice-form", icon: faFileInvoice, text: "Invoices" },
     { to: "/users", icon: faUserCog, text: "Users" },
   ];
 
@@ -97,7 +97,7 @@ const SideBar = ({ user, onLogout }) => {
         className={`sidebar ${isOpen ? "open" : "closed"}`}
       >
         <div className="sidebar-header">
-          <img src={companyLogoUrl} />
+          <img src={companyLogoUrl} alt="Company logo" className="sidebar-logo" />
         </div>
 
         <nav className="sidebar-nav">

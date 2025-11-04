@@ -49,6 +49,14 @@
   object-fit: contain;
 }
 
+/* Consistent logo sizing */
+.sidebar-logo {
+  display: block;
+  margin: 0 auto;
+  max-height: 150px; /* desktop/tablet */
+  width: auto;
+}
+
 .sidebar-title {
   font-size: 1.4rem;
   font-weight: bold;
@@ -224,7 +232,7 @@
   .sidebar-header {
     padding: 0.75rem;
   }
-  .sidebar-header img { max-height: 1.5rem; width: 100%; height: auto; object-fit: contain; }
+  .sidebar-logo { max-height: 56px; }
 
   .sidebar-nav {
     padding: 0.25rem 0; /* 4px */
@@ -245,6 +253,6 @@
   .sidebar { max-width: 80vw; }
   .sidebar-link { padding: 0.75rem 1rem; font-size: 0.9375rem; }
   .sidebar-toggle { padding: 0.625rem; top: 0.875rem; left: 0.875rem; }
-  .sidebar-header img { max-height: 4rem; }
+  .sidebar-logo { max-height: 48px; }
   .sidebar-logout-btn { padding: 0.5rem 0.75rem; font-size: 0.85rem; }
 }
