@@ -94,15 +94,41 @@ const CustomerForm = ({ editCustomer, onDataUpdate }) => {
 
     const newErrors = {};
 
+    // Determine changed fields when editing
+    const changedKeys = new Set();
+    if (editCustomer) {
+      const original = {
+        ...editCustomer,
+        openingDate: editCustomer.openingDate?.slice(0, 10) || "",
+        company_id:
+          currentUser?.userType === "Customer User"
+            ? String(currentUser?.company_id || "")
+            : String(editCustomer.company_id || ""),
+      };
+      Object.entries(formData).forEach(([k, v]) => {
+        const vStr = typeof v === "string" ? v.trim() : v;
+        const o = original[k];
+        const oStr = typeof o === "string" ? o.trim() : o;
+        if (String(vStr ?? "") !== String(oStr ?? "")) changedKeys.add(k);
+      });
+    }
+
+    const shouldValidate = (key) => {
+      // For create, validate all required rules. For edit, only validate changed fields.
+      return !editCustomer || changedKeys.has(key);
+    };
+
     // Customer Name validation
-    if (!formData.customerName.trim()) {
-      newErrors.customerName = "Customer name is required";
-    } else if (formData.customerName.trim().length < 3) {
-      newErrors.customerName = "Customer name must be at least 3 characters";
+    if (shouldValidate("customerName")) {
+      if (!formData.customerName.trim()) {
+        newErrors.customerName = "Customer name is required";
+      } else if (formData.customerName.trim().length < 3) {
+        newErrors.customerName = "Customer name must be at least 3 characters";
+      }
     }
 
     // GST Number validation (15 characters alphanumeric)
-    if (formData.gstNumber.trim()) {
+    if (shouldValidate("gstNumber") && formData.gstNumber.trim()) {
       const gstRegex =
         /^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$/;
       if (!gstRegex.test(formData.gstNumber.trim())) {
@@ -111,28 +137,32 @@ const CustomerForm = ({ editCustomer, onDataUpdate }) => {
       }
     }
 
-    // State Code validation (required)
-    if (!formData.stateCode.trim()) {
-      newErrors.stateCode =
-        "State code is required (leave empty only for customers outside India)";
-    } else if (!/^[0-9]{2}$/.test(formData.stateCode.trim())) {
-      newErrors.stateCode = "State code must be 2 digits (e.g., 24)";
-    } else {
-      const stateCodeNum = parseInt(formData.stateCode);
-      if (stateCodeNum < 1 || stateCodeNum > 37) {
-        newErrors.stateCode = "State code must be between 01 and 37";
+    // State Code validation (required on create; on edit only if changed)
+    if (shouldValidate("stateCode")) {
+      if (!formData.stateCode.trim()) {
+        newErrors.stateCode =
+          "State code is required (leave empty only for customers outside India)";
+      } else if (!/^[0-9]{2}$/.test(formData.stateCode.trim())) {
+        newErrors.stateCode = "State code must be 2 digits (e.g., 24)";
+      } else {
+        const stateCodeNum = parseInt(formData.stateCode);
+        if (stateCodeNum < 1 || stateCodeNum > 37) {
+          newErrors.stateCode = "State code must be between 01 and 37";
+        }
       }
     }
 
-    // Contact Number validation (10 digits)
-    if (!formData.contactNumber.trim()) {
-      newErrors.contactNumber = "Contact number is required";
-    } else if (!/^\d{10}$/.test(formData.contactNumber.trim())) {
-      newErrors.contactNumber = "Contact number must be 10 digits";
+    // Contact Number validation (10 digits; required on create, on edit only if changed)
+    if (shouldValidate("contactNumber")) {
+      if (!formData.contactNumber.trim()) {
+        newErrors.contactNumber = "Contact number is required";
+      } else if (!/^\d{10}$/.test(formData.contactNumber.trim())) {
+        newErrors.contactNumber = "Contact number must be 10 digits";
+      }
     }
 
-    // Email validation
-    if (formData.emailAddress.trim()) {
+    // Email validation (only if provided and changed)
+    if (shouldValidate("emailAddress") && formData.emailAddress.trim()) {
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
       if (!emailRegex.test(formData.emailAddress.trim())) {
         newErrors.emailAddress = "Invalid email format";
@@ -140,12 +170,16 @@ const CustomerForm = ({ editCustomer, onDataUpdate }) => {
     }
 
     // Opening Balance validation
-    if (formData.openingBalance && Number(formData.openingBalance) < 0) {
+    if (
+      shouldValidate("openingBalance") &&
+      formData.openingBalance &&
+      Number(formData.openingBalance) < 0
+    ) {
       newErrors.openingBalance = "Opening balance cannot be negative";
     }
 
-    // Company validation
-    if (!isCustomer && !formData.company_id) {
+    // Company validation (required on create; on edit only if changed for non-customer)
+    if (!isCustomer && shouldValidate("company_id") && !formData.company_id) {
       newErrors.company_id = "Company is required";
     }
 
@@ -158,19 +192,57 @@ const CustomerForm = ({ editCustomer, onDataUpdate }) => {
 
     setLoading(true);
 
-    const payload = {
-      ...formData,
-      customerName: formData.customerName.trim(),
-      gstNumber: formData.gstNumber.trim(),
-      contactNumber: formData.contactNumber.trim(),
-      emailAddress: formData.emailAddress.trim(),
-      billingAddress: formData.billingAddress.trim(),
-      shippingAddress: formData.shippingAddress.trim(),
-      openingBalance: formData.openingBalance
-        ? Number(formData.openingBalance)
-        : 0,
-      company_id: parseInt((currentUser?.userType === "Customer User") && currentUser?.company_id ? currentUser.company_id : formData.company_id),
-    };
+    // Build payload
+    let payload;
+    if (editCustomer) {
+      // Only send changed fields for update to avoid unnecessary duplicate checks
+      payload = {};
+      const addIfChanged = (key, val) => {
+        if (!changedKeys.size || changedKeys.has(key)) payload[key] = val;
+      };
+      addIfChanged("customerName", formData.customerName.trim());
+      addIfChanged("gstNumber", formData.gstNumber.trim());
+      addIfChanged("stateCode", formData.stateCode.trim());
+      addIfChanged("contactNumber", formData.contactNumber.trim());
+      addIfChanged("emailAddress", formData.emailAddress.trim());
+      addIfChanged("billingAddress", formData.billingAddress.trim());
+      addIfChanged("shippingAddress", formData.shippingAddress.trim());
+      addIfChanged(
+        "openingBalance",
+        formData.openingBalance ? Number(formData.openingBalance) : 0
+      );
+      if (formData.openingDate)
+        addIfChanged("openingDate", formData.openingDate);
+      const resolvedCompanyId = parseInt(
+        currentUser?.userType === "Customer User" && currentUser?.company_id
+          ? currentUser.company_id
+          : formData.company_id || 0
+      );
+      if (!isNaN(resolvedCompanyId) && shouldValidate("company_id")) {
+        addIfChanged("company_id", resolvedCompanyId);
+      } else if (!editCustomer) {
+        addIfChanged("company_id", resolvedCompanyId);
+      }
+      addIfChanged("isActive", formData.isActive);
+    } else {
+      payload = {
+        ...formData,
+        customerName: formData.customerName.trim(),
+        gstNumber: formData.gstNumber.trim(),
+        contactNumber: formData.contactNumber.trim(),
+        emailAddress: formData.emailAddress.trim(),
+        billingAddress: formData.billingAddress.trim(),
+        shippingAddress: formData.shippingAddress.trim(),
+        openingBalance: formData.openingBalance
+          ? Number(formData.openingBalance)
+          : 0,
+        company_id: parseInt(
+          currentUser?.userType === "Customer User" && currentUser?.company_id
+            ? currentUser.company_id
+            : formData.company_id
+        ),
+      };
+    }
 
     if (editCustomer) {
       const [data, error] = await safeApiCall(
