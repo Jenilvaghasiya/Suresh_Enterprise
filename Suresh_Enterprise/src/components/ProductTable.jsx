@@ -143,6 +143,7 @@ const ProductTable = ({ onEditClick, refreshTrigger }) => {
       <table className="product-table">
         <thead>
           <tr>
+            <th>Sr No</th>
             <th>Name</th>
             <th>Description</th>
             <th>HSN Code</th>
@@ -150,14 +151,15 @@ const ProductTable = ({ onEditClick, refreshTrigger }) => {
             <th>Price</th>
             <th>Category</th>
             {!isCustomer && <th>Company</th>}
-            <th>Active</th>
+            <th>Status</th>
             <th>Actions</th>
           </tr>
         </thead>
         <tbody>
           {currentProducts.length > 0 ? (
-            currentProducts.map((prod) => (
+            currentProducts.map((prod, idx) => (
               <tr key={prod.id}>
+                <td data-label="Sr No">{indexOfFirstItem + idx + 1}</td>
                 <td data-label="Name">{prod.productName}</td>
                 <td data-label="Description">{prod.description}</td>
                 <td data-label="HSN Code">{prod.hsnCode || "-"}</td>
@@ -186,7 +188,7 @@ const ProductTable = ({ onEditClick, refreshTrigger }) => {
             ))
           ) : (
             <tr>
-              <td colSpan={isCustomer ? 8 : 9} style={{ textAlign: "center" }}>
+              <td colSpan={isCustomer ? 9 : 10} style={{ textAlign: "center" }}>
                 No products available
               </td>
             </tr>

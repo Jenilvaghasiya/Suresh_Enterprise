@@ -136,7 +136,8 @@ const UserTable = ({ onEditClick, refreshTrigger }) => {
       <table className="user-table">
         <thead>
           <tr>
-            <th>ID</th>
+            <th>Sr No</th>
+            {/* <th>ID</th> */}
             <th>Name</th>
             <th>Email</th>
             <th>Mobile</th>
@@ -149,9 +150,10 @@ const UserTable = ({ onEditClick, refreshTrigger }) => {
         </thead>
         <tbody>
           {currentUsers.length > 0 ? (
-            currentUsers.map((user) => (
+            currentUsers.map((user, idx) => (
               <tr key={user.id}>
-                <td data-label="ID">{user.id}</td>
+                <td data-label="Sr No">{indexOfFirstItem + idx + 1}</td>
+                {/* <td data-label="ID">{user.id}</td> */}
                 <td data-label="Name">{user.name}</td>
                 <td data-label="Email">{user.email}</td>
                 <td data-label="Mobile">{user.mobile}</td>
@@ -188,7 +190,7 @@ const UserTable = ({ onEditClick, refreshTrigger }) => {
             ))
           ) : (
             <tr>
-              <td colSpan={isCustomer ? 8 : 9}>No users found</td>
+              <td colSpan={isCustomer ? 9 : 10}>No users found</td>
             </tr>
           )}
         </tbody>

@@ -155,6 +155,7 @@ const CustomerTable = ({ onEditClick, refreshTrigger }) => {
       <table className="customer-table">
         <thead>
           <tr>
+            <th>Sr No</th>
             <th>Name</th>
             <th>GST No.</th>
             <th>Contact No.</th>
@@ -164,14 +165,15 @@ const CustomerTable = ({ onEditClick, refreshTrigger }) => {
             <th>Opening Balance</th>
             <th>Opening Date</th>
             {!isCustomer && <th>Company</th>}
-            <th>Active</th>
+            <th>Status</th>
             <th>Actions</th>
           </tr>
         </thead>
         <tbody>
           {currentCustomers.length > 0 ? (
-            currentCustomers.map((cust) => (
+            currentCustomers.map((cust, idx) => (
               <tr key={cust.id}>
+                <td data-label="Sr No">{indexOfFirstItem + idx + 1}</td>
                 <td data-label="Name">{cust.customerName}</td>
                 <td data-label="GST No.">{cust.gstNumber || "-"}</td>
                 <td data-label="Contact No.">{cust.contactNumber}</td>
@@ -202,7 +204,7 @@ const CustomerTable = ({ onEditClick, refreshTrigger }) => {
             ))
           ) : (
             <tr>
-              <td colSpan={isCustomer ? 10 : 11}>No customers found</td>
+              <td colSpan={isCustomer ? 11 : 12}>No customers found</td>
             </tr>
           )}
         </tbody>

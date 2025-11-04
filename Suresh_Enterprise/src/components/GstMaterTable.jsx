@@ -119,7 +119,7 @@ const GstMasterTable = ({ onEditClick, refreshTrigger }) => {
               <th>SGST Rate</th>
               <th>CGST Rate</th>
               <th>IGST Rate</th>
-              <th>Active</th>
+              <th>Status</th>
               <th>Actions</th>
             </tr>
           </thead>

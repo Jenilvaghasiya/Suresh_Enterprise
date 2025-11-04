@@ -150,7 +150,8 @@ const CompanyTable = ({ onEditClick, refreshTrigger }) => {
       <table className="company-table">
         <thead>
           <tr>
-            <th>ID</th>
+            <th>Sr No</th>
+            {/* <th>ID</th> */}
             <th>Logo</th>
             <th>Name</th>
             <th>Address</th>
@@ -163,15 +164,16 @@ const CompanyTable = ({ onEditClick, refreshTrigger }) => {
             <th>State</th>
             <th>Country</th>
             <th>GST Rate</th>
-            <th>Active</th>
+            <th>Status</th>
             <th>Actions</th>
           </tr>
         </thead>
         <tbody>
           {currentCompanies.length > 0 ? (
-            currentCompanies.map((c) => (
+            currentCompanies.map((c, idx) => (
               <tr key={c.id}>
-                <td data-label="ID">{c.id}</td>
+                <td data-label="Sr No">{indexOfFirstItem + idx + 1}</td>
+                {/* <td data-label="ID">{c.id}</td> */}
                 <td data-label="Logo">
                   {c.companyLogo ? (
                     <img
@@ -224,7 +226,7 @@ const CompanyTable = ({ onEditClick, refreshTrigger }) => {
             ))
           ) : (
             <tr>
-              <td colSpan="15" style={{ textAlign: "center" }}>
+              <td colSpan="16" style={{ textAlign: "center" }}>
                 No companies found
               </td>
             </tr>

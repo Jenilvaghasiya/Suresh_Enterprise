@@ -131,18 +131,20 @@ const CategoryTable = ({ onEditClick, refreshTrigger, searchQuery }) => {
       <table className="category-table">
         <thead>
           <tr>
-            <th scope="col">Category Id</th>
+            <th scope="col">Sr No</th>
+            {/* <th scope="col">Category Id</th> */}
             <th scope="col">Category Name</th>
             {!isCustomer && <th scope="col">Company</th>}
-            <th scope="col">Active</th>
+            <th scope="col">Status</th>
             <th scope="col">Actions</th>
           </tr>
         </thead>
         <tbody>
           {paginatedCategories.length > 0 ? (
-            paginatedCategories.map((cat) => (
+            paginatedCategories.map((cat, idx) => (
               <tr key={cat.id}>
-                <td data-label="Category Id">{cat.id}</td>
+                <td data-label="Sr No">{startIndex + idx + 1}</td>
+                {/* <td data-label="Category Id">{cat.id}</td> */}
                 <td data-label="Category Name">{cat.name}</td>
                 {!isCustomer && (
                   <td data-label="Company">{companyNameById[cat.company_id] || cat.company_id}</td>
@@ -169,7 +171,7 @@ const CategoryTable = ({ onEditClick, refreshTrigger, searchQuery }) => {
             ))
           ) : (
             <tr>
-              <td colSpan={isCustomer ? 4 : 5}>
+              <td colSpan={isCustomer ? 5 : 6}>
                 {searchQuery
                   ? `No categories found matching "${searchQuery}"`
                   : "No categories found"}
