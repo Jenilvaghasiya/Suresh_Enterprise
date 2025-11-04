@@ -110,9 +110,9 @@ const DashboardPage = () => {
         <h1 style={{ fontSize: "28px", fontWeight: "700", color: "#1f2937", marginBottom: "8px" }}>
           Dashboard
         </h1>
-        <p style={{ color: "#6b7280", fontSize: "14px" }}>
+        {/* <p style={{ color: "#6b7280", fontSize: "14px" }}>
           Welcome back! Here's what's happening with your business today.
-        </p>
+        </p> */}
       </div>
 
       {error && (
