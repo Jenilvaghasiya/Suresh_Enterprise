@@ -11,7 +11,7 @@ const BillPage = () => {
   return (
     <div className="bill-pages-container">
       <div className="bill-pages-header">
-        <h2>Bill Management</h2>
+        <h2>Invoice Management</h2>
         <button className="toggle-button" onClick={handleToggleForm}>
           {showForm ? "View Bills & Items" : "Create Invoice"}
         </button>

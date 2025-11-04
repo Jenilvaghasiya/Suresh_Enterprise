@@ -250,19 +250,19 @@ const BillTable = ({ refreshTrigger, onEdit }) => {
         <table className="bill-table">
           <thead>
             <tr>
-              <th>Sr_No</th>
-              <th>Invoice_Number</th>
-              <th>Customer_Name</th>
-              <th>Company_Name</th>
-              <th>Bill_Date</th>
-              <th>Deliver_At</th>
+              <th>Sr No</th>
+              <th>Invoice Number</th>
+              <th>Customer Name</th>
+              <th>Company Name</th>
+              <th>Bill Date</th>
+              <th>Deliver At</th>
               <th>Transport</th>
-              <th>Lr_Number</th>
+              <th>Lr Number</th>
               <th>TotalAssesValue</th>
               <th>sgstAmount</th>
               <th>cgstAmount</th>
               <th>igstAmount</th>
-              <th>isActive</th>
+              <th>Status</th>
               <th>Actions</th>
             </tr>
           </thead>
