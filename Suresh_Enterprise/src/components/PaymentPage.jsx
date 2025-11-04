@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import '../styles/PaymentPage.css';
-import { safeApiCall, getCustomers, getCustomerBalance, addPayment, createRazorpayOrder } from "../services/api";
+import { safeApiCall, getCustomers, getCustomerBalance, addPayment, createRazorpayOrder, getInvoicesByCompanyId, getInvoicesByUserId } from "../services/api";
 
 const useQuery = () => new URLSearchParams(useLocation().search);
 
@@ -17,6 +17,29 @@ const PaymentPage = () => {
   const [loading, setLoading] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
+  const [invoices, setInvoices] = useState([]);
+  const [selectedInvoiceId, setSelectedInvoiceId] = useState("");
+  const filteredInvoices = useMemo(() => {
+    const list = Array.isArray(invoices) ? invoices : [];
+    const mine = list.filter(inv => String(inv.customerId) === String(selectedCustomerId));
+    const withOutstanding = mine.filter(inv => {
+      const total = Number(inv.billValue ?? inv.totalAmount ?? 0);
+      const paid = Number(inv.paidAmount ?? 0);
+      return total - paid > 0;
+    });
+    // Sort by billDate desc
+    return withOutstanding.sort((a, b) => new Date(b.billDate) - new Date(a.billDate));
+  }, [invoices, selectedCustomerId]);
+
+  const invoiceSummary = useMemo(() => {
+    const count = filteredInvoices.length;
+    const outstanding = filteredInvoices.reduce((sum, inv) => {
+      const total = Number(inv.billValue ?? inv.totalAmount ?? 0);
+      const paid = Number(inv.paidAmount ?? 0);
+      return sum + (total - paid);
+    }, 0);
+    return { count, outstanding };
+  }, [filteredInvoices]);
 
   // Form fields
   const [amount, setAmount] = useState("");
@@ -57,7 +80,33 @@ const PaymentPage = () => {
     if (!selectedCustomerId) return;
     const cust = customers.find(c => String(c.id) === String(selectedCustomerId));
     if (cust) setCompanyId(cust.company_id);
+    setSelectedInvoiceId("");
   }, [selectedCustomerId, customers]);
+
+  // Load invoices depending on role (Customer User -> user invoices; else -> company invoices), then filter by selected customer
+  useEffect(() => {
+    const loadInvoices = async () => {
+      if (!selectedCustomerId) return;
+      let res, err;
+      if (isCustomerUser && currentUser?.id) {
+        [res, err] = await safeApiCall(getInvoicesByUserId, currentUser.id);
+      } else {
+        if (!companyId) return;
+        [res, err] = await safeApiCall(getInvoicesByCompanyId, companyId);
+      }
+      if (err) return; // keep silent, user can still pay without linking invoice
+      const list = Array.isArray(res?.data) ? res.data : [];
+      setInvoices(list);
+    };
+    loadInvoices();
+  }, [companyId, selectedCustomerId, isCustomerUser, currentUser]);
+
+  // Default select most recent unpaid invoice when list first loads
+  useEffect(() => {
+    if (isCustomerUser && !selectedInvoiceId && filteredInvoices.length > 0) {
+      setSelectedInvoiceId(String(filteredInvoices[0].id));
+    }
+  }, [filteredInvoices, selectedInvoiceId, isCustomerUser]);
 
   // Load balance when customer changes
   useEffect(() => {
@@ -76,6 +125,7 @@ const PaymentPage = () => {
     setChequeDate("");
     setBankName("");
     setIfsc("");
+    setSelectedInvoiceId("");
   };
 
   const handleSubmit = async (e) => {
@@ -99,6 +149,7 @@ const PaymentPage = () => {
       cheque_date: mode === "Cheque" ? chequeDate || null : null,
       bank_name: mode === "Cheque" ? bankName || null : null,
       ifsc_code: mode === "Cheque" ? ifsc || null : null,
+      invoiceId: isCustomerUser && selectedInvoiceId ? Number(selectedInvoiceId) : null,
     };
     const [res, err] = await safeApiCall(addPayment, payload);
     setSubmitting(false);
@@ -161,6 +212,7 @@ const PaymentPage = () => {
             amount: Number(amount),
             mode_payment: "Online",
             remarks: `Razorpay: ${response.razorpay_payment_id}`,
+            invoiceId: isCustomerUser && selectedInvoiceId ? Number(selectedInvoiceId) : null,
           };
           await safeApiCall(addPayment, payload);
           const [bal] = await safeApiCall(getCustomerBalance, selectedCustomerId);
@@ -390,6 +442,47 @@ const PaymentPage = () => {
               <option>Others</option>
             </select>
           </div>
+          {isCustomerUser && filteredInvoices.length > 0 && (
+            <div className="payment-grid-full">
+              <label style={{
+                display: "block",
+                fontSize: 13,
+                fontWeight: 600,
+                color: "#374151",
+                marginBottom: 8,
+                textTransform: "uppercase",
+                letterSpacing: "0.5px"
+              }}>Invoice (optional)</label>
+              <select
+                value={selectedInvoiceId}
+                onChange={(e) => setSelectedInvoiceId(e.target.value)}
+                style={{
+                  width: "100%",
+                  padding: "12px 14px",
+                  border: "2px solid #d1d5db",
+                  borderRadius: 10,
+                  fontSize: 15,
+                  color: "#1f2937",
+                  background: "#ffffff",
+                  cursor: "pointer",
+                  transition: "all 0.2s ease",
+                  outline: "none"
+                }}
+                onFocus={(e) => e.target.style.borderColor = "#165638"}
+                onBlur={(e) => e.target.style.borderColor = "#d1d5db"}
+              >
+                <option value="">-- Link to an invoice (optional) --</option>
+                {filteredInvoices.map(inv => (
+                  <option key={inv.id} value={inv.id}>
+                    {`#${inv.billNumber || inv.invoiceNumber || inv.id} • ₹${Number((inv.billValue ?? inv.totalAmount) || 0).toFixed(2)} (paid ₹${Number(inv.paidAmount || 0).toFixed(2)}) • due ₹${(Number(inv.billValue ?? inv.totalAmount ?? 0) - Number(inv.paidAmount ?? 0)).toFixed(2)} • ${new Date(inv.billDate).toLocaleDateString()}`}
+                  </option>
+                ))}
+              </select>
+              <div style={{ marginTop: 8, fontSize: 12, color: "#6b7280" }}>
+                {invoiceSummary.count} unpaid invoice(s). Total due: ₹{invoiceSummary.outstanding.toFixed(2)}
+              </div>
+            </div>
+          )}
           {mode === "Cheque" && (
             <>
               <div>

@@ -1,331 +1,599 @@
+/* BillForm.css - Complete Enhanced IGNITE Theme */
+
+* {
+  box-sizing: border-box;
+}
+
 .bill-form-container {
-    margin: 0.625rem 0 3.125rem 0;
-    padding: 1.25rem;
-    display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
-    background: #ffffff;
-    border-radius: 0.9375rem;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 24px;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  background: #f9fafb;
+  min-height: 100vh;
 }
 
 .bill-form-container h3 {
-    color: #165638;
-    font-size: 1.5625rem;
-    font-weight: bold;
+  font-size: 28px;
+  font-weight: 700;
+  color: #165638;
+  margin: 0 0 24px 0;
+  letter-spacing: -0.5px;
 }
 
+.bill-form-container h4 {
+  font-size: 18px;
+  font-weight: 600;
+  color: #374151;
+  margin: 24px 0 16px 0;
+}
+
+/* Top Split Layout */
+.bill-top-split {
+  display: grid;
+  grid-template-columns: 400px 1fr;
+  gap: 24px;
+  margin-bottom: 24px;
+}
+
+/* Customer Details Card */
+.customer-details-card {
+  background: linear-gradient(135deg, #ffffff 0%, #f9fafb 100%);
+  border: 2px solid #e5e7eb;
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+  height: fit-content;
+  position: sticky;
+  top: 20px;
+}
+
+.customer-details-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.customer-details-grid > div {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 8px 0;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.customer-details-grid > div:last-child {
+  border-bottom: none;
+}
+
+.cd-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: #6b7280;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.cd-value {
+  font-size: 14px;
+  font-weight: 500;
+  color: #1f2937;
+  word-break: break-word;
+}
+
+/* Form Grid */
 .form-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
-    gap: 1.125rem 1.5rem;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+  background: #ffffff;
+  border: 2px solid #e5e7eb;
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
 }
 
 .form-grid label {
-    display: flex;
-    flex-direction: column;
-    font-size: 0.9375rem;
-    font-weight: 500;
-    color: #374151;
+  display: flex;
+  flex-direction: column;
+  font-size: 13px;
+  font-weight: 600;
+  color: #374151;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  gap: 8px;
 }
 
 .form-grid input,
 .form-grid select {
-    padding: 0.625rem;
-    border: 1px solid #cbd5e1;
-    border-radius: 0.3125rem;
-    margin-top: 0.375rem;
-    font-size: 0.9375rem;
-    transition: border-color 0.2s ease, box-shadow 0.2s ease;
-    box-sizing: border-box;
-    color: #000000; 
-    background: #ffffff; 
+  width: 100%;
+  padding: 12px 14px;
+  border: 2px solid #d1d5db;
+  border-radius: 10px;
+  font-size: 15px;
+  color: #1f2937;
+  background: #ffffff;
+  transition: all 0.2s ease;
+  outline: none;
+  font-family: inherit;
 }
 
 .form-grid input:focus,
 .form-grid select:focus {
-    outline: none;
-    border-color: #2563eb;
-    box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.25);
+  border-color: #165638;
+  box-shadow: 0 0 0 3px rgba(22, 86, 56, 0.1);
 }
 
-.form-grid select option {
-    color: #000000; 
-    background: #ffffff; 
+.form-grid input:disabled,
+.form-grid input:read-only {
+  background: #f9fafb;
+  cursor: not-allowed;
+  color: #6b7280;
 }
 
-.bill-items-table {
-    display: flex;
-    flex-direction: column;
-    gap: 0.75rem;
-    margin-top: 1.25rem;
+.form-grid small {
+  font-size: 12px;
+  color: #6b7280;
+  margin-top: 4px;
+  font-weight: 400;
+  text-transform: none;
+  letter-spacing: normal;
 }
 
-.bill-items-header {
-    display: grid;
-    grid-template-columns: 2.5rem 1fr 6.25rem 4.375rem 5rem 5.625rem 5.625rem 6.25rem;
-    gap: 0.625rem;
-    font-weight: bold;
-    color: #165638;
-    font-size: 0.875rem;
+/* Dropdown Autocomplete Styles */
+.form-grid label > div,
+.bill-item-field > div {
+  position: relative;
 }
 
-.bill-items {
-    display: grid;
-    grid-template-columns: 2.5rem 1fr 6.25rem 4.375rem 5rem 5.625rem 5.625rem 6.25rem;
-    gap: 0.625rem;
-    align-items: center;
+.dropdown-menu {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  background: #ffffff;
+  border: 2px solid #d1d5db;
+  border-radius: 10px;
+  max-height: 250px;
+  overflow-y: auto;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+  margin: 0;
 }
 
-/* Field wrapper for better mobile layout (hidden effect on desktop) */
-.bill-item-field {
-    display: contents;
+.dropdown-menu::-webkit-scrollbar {
+  width: 8px;
 }
 
-.bill-item-field .mobile-label {
-    display: none;
+.dropdown-menu::-webkit-scrollbar-track {
+  background: #f3f4f6;
+  border-radius: 10px;
 }
 
-.bill-items select,
-.bill-items input {
-    padding: 0.5rem;
-    border: 1px solid #cbd5e1;
-    border-radius: 0.375rem;
-    font-size: 0.875rem;
-    box-sizing: border-box;
-    color: #000000;
-    background: #ffffff;
+.dropdown-menu::-webkit-scrollbar-thumb {
+  background: #d1d5db;
+  border-radius: 10px;
 }
 
-.bill-items select option {
-    color: #000000;
-    background: #ffffff;
+.dropdown-menu::-webkit-scrollbar-thumb:hover {
+  background: #9ca3af;
 }
 
-.bill-form-button {
-    padding: 0.625rem 0.75rem;
-    background: #165638;
-    color: white;
-    border: none;
-    width: auto;
-    min-width: 9.375rem;
-    border-radius: 0.375rem;
-    cursor: pointer;
-    font-size: 0.9375rem;
-    margin-top: 0.3125rem;
-    font-weight: 400;
-    transition: background 0.2s ease-in-out;
+.dropdown-item {
+  padding: 12px 16px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 14px;
+  color: #1f2937;
+  border-bottom: 1px solid #f3f4f6;
 }
 
-.bill-form-button:hover {
-    background: #0fec85;
+.dropdown-item:last-child {
+  border-bottom: none;
 }
 
-.bill-form-button:active {
-    background: #90eac0;
+.dropdown-item:hover {
+  background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
+  color: #165638;
+  font-weight: 500;
 }
 
-.buttons-add-delete {
-    display: flex;
-    flex-direction: row;
-    gap: 0.625rem;
+.dropdown-item-placeholder {
+  padding: 12px 16px;
+  color: #6b7280;
+  font-style: italic;
+  cursor: pointer;
+  border-bottom: 1px solid #f3f4f6;
+  font-size: 14px;
 }
 
-.bill-add-item-button,
-.bill-delete-item-button {
-    padding: 0.625rem 0.75rem;
-    background: #165638;
-    color: white;
-    border: none;
-    width: auto;
-    min-width: 9.375rem;
-    border-radius: 0.375rem;
-    cursor: pointer;
-    font-size: 0.9375rem;
-    margin-top: 0.3125rem;
-    font-weight: 400;
-    transition: background 0.2s ease-in-out;
+.dropdown-item-placeholder:hover {
+  background: #f9fafb;
+  color: #374151;
 }
 
-.bill-add-item-button:hover,
-.bill-delete-item-button:hover {
-    background: #0fec85;
+.dropdown-item-empty {
+  padding: 12px 16px;
+  color: #9ca3af;
+  text-align: center;
+  font-style: italic;
+  font-size: 14px;
 }
 
-.bill-add-item-button:active,
-.bill-delete-item-button:active {
-    background: #90eac0;
+.dropdown-item-disabled {
+  padding: 12px 16px;
+  color: #9ca3af;
+  cursor: not-allowed;
+  font-size: 14px;
+  border-bottom: 1px solid #f3f4f6;
 }
 
-.bill-form-button:disabled,
-.bill-add-item-button:disabled,
-.bill-delete-item-button:disabled {
-    background: #9ca3af;
-    cursor: not-allowed;
+.dropdown-item-disabled:hover {
+  background: transparent;
 }
 
+/* Input Error State */
 .input-error {
-    border-color: #ef4444 !important;
-}
-
-.input-error:focus {
-    border-color: #dc2626 !important;
-    box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.25) !important;
+  border-color: #f87171 !important;
+  box-shadow: 0 0 0 3px rgba(248, 113, 113, 0.1) !important;
 }
 
 .error-message {
-    color: #ef4444;
-    font-size: 0.75rem;
-    margin-top: 0.25rem;
-    font-weight: 400;
+  color: #dc2626;
+  font-size: 12px;
+  font-weight: 500;
+  margin-top: 4px;
+  display: block;
 }
 
+/* Invoice Items Table */
+.bill-items-table {
+  background: #ffffff;
+  border: 2px solid #e5e7eb;
+  border-radius: 16px;
+  padding: 20px;
+  margin-bottom: 24px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+}
+
+.bill-items-header {
+  display: grid;
+  grid-template-columns: 50px 2fr 1fr 1fr 1fr 1fr 1fr 1fr;
+  gap: 12px;
+  padding: 12px 16px;
+  background: linear-gradient(135deg, #165638 0%, #1e7e34 100%);
+  color: #ffffff;
+  font-weight: 600;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  border-radius: 10px;
+  margin-bottom: 12px;
+  box-shadow: 0 2px 8px rgba(22, 86, 56, 0.3);
+}
+
+.bill-items-header span {
+  display: flex;
+  align-items: center;
+}
+
+.bill-items {
+  display: grid;
+  grid-template-columns: 50px 2fr 1fr 1fr 1fr 1fr 1fr 1fr;
+  gap: 12px;
+  padding: 12px 16px;
+  background: #f9fafb;
+  border-radius: 10px;
+  margin-bottom: 8px;
+  align-items: center;
+  transition: all 0.2s ease;
+}
+
+.bill-items:hover {
+  background: #f3f4f6;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  transform: translateY(-1px);
+}
+
+.bill-item-field {
+  display: flex;
+  align-items: center;
+}
+
+.mobile-label {
+  display: none;
+}
+
+.bill-item-field input,
+.bill-item-field select {
+  width: 100%;
+  padding: 10px 12px;
+  border: 2px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 14px;
+  color: #1f2937;
+  background: #ffffff;
+  transition: all 0.2s ease;
+  outline: none;
+}
+
+.bill-item-field input:focus,
+.bill-item-field select:focus {
+  border-color: #165638;
+  box-shadow: 0 0 0 3px rgba(22, 86, 56, 0.1);
+}
+
+.bill-item-field input:read-only {
+  background: #f9fafb;
+  cursor: default;
+  color: #6b7280;
+  border-color: #e5e7eb;
+}
+
+.bill-item-field span:first-child {
+  font-weight: 600;
+  color: #374151;
+}
+
+/* Buttons */
+.buttons-add-delete {
+  display: flex;
+  gap: 12px;
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 2px solid #e5e7eb;
+}
+
+.bill-add-item-button,
+.bill-delete-item-button,
+.bill-form-button {
+  padding: 12px 20px;
+  border: none;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.bill-add-item-button {
+  background: linear-gradient(135deg, #165638 0%, #1e7e34 100%);
+  color: #ffffff;
+  box-shadow: 0 4px 12px rgba(22, 86, 56, 0.3);
+  flex: 1;
+}
+
+.bill-add-item-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(22, 86, 56, 0.4);
+}
+
+.bill-add-item-button:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 8px rgba(22, 86, 56, 0.3);
+}
+
+.bill-delete-item-button {
+  background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+  color: #ffffff;
+  box-shadow: 0 4px 12px rgba(220, 38, 38, 0.3);
+  flex: 1;
+}
+
+.bill-delete-item-button:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(220, 38, 38, 0.4);
+}
+
+.bill-delete-item-button:active:not(:disabled) {
+  transform: translateY(0);
+  box-shadow: 0 2px 8px rgba(220, 38, 38, 0.3);
+}
+
+.bill-delete-item-button:disabled {
+  background: #9ca3af;
+  cursor: not-allowed;
+  box-shadow: none;
+  opacity: 0.5;
+}
+
+.bill-form-button {
+  background: linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%);
+  color: #ffffff;
+  box-shadow: 0 4px 12px rgba(14, 165, 233, 0.3);
+  flex: 1;
+}
+
+.bill-form-button:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(14, 165, 233, 0.4);
+}
+
+.bill-form-button:active:not(:disabled) {
+  transform: translateY(0);
+  box-shadow: 0 2px 8px rgba(14, 165, 233, 0.3);
+}
+
+.bill-form-button:disabled {
+  background: #9ca3af;
+  cursor: not-allowed;
+  box-shadow: none;
+  transform: none;
+  opacity: 0.6;
+}
+
+/* Totals Section */
 .totals-section {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-    margin-top: 1.25rem;
-    padding: 0.9375rem;
-    background: #f9fafb;
-    border-radius: 8px;
+  background: linear-gradient(135deg, #ffffff 0%, #f9fafb 100%);
+  border: 2px solid #e5e7eb;
+  border-radius: 16px;
+  padding: 24px;
+  margin-bottom: 24px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
 }
 
 .totals-section h4 {
-    margin: 0;
-    color: #374151;
-    font-size: 1rem;
+  margin: 8px 0;
+  font-size: 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 0;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.totals-section h4:last-child {
+  border-bottom: none;
 }
 
 .grand-total-text {
-    color: #165638 !important;
-    font-size: 1.25rem !important;
-    font-weight: bold !important;
-    border-top: 2px solid #cbd5e1;
-    padding-top: 0.625rem;
-    margin-top: 0.625rem !important;
+  font-size: 20px !important;
+  font-weight: 700 !important;
+  color: #165638 !important;
+  background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
+  padding: 16px !important;
+  border-radius: 10px;
+  margin-top: 16px !important;
+  box-shadow: 0 2px 8px rgba(22, 86, 56, 0.1);
 }
 
-/* Two-part top layout */
-.bill-top-split {
-    display: grid;
-    grid-template-columns: 1.1fr 2fr;
-    gap: 1rem;
-    align-items: start;
-}
-
-.customer-details-card {
-    background: #f9fafb;
-    border: 1px solid #e5e7eb;
-    border-radius: 8px;
-    padding: 0.75rem 0.875rem;
-}
-
-.customer-details-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 0.625rem 0.75rem;
-}
-
-.customer-details-grid > div {
-    background: #ffffff;
-    border: 1px solid #e5e7eb;
-    border-radius: 6px;
-    padding: 0.375rem 0.5rem;
-    display: flex;
-    flex-direction: column;
-    gap: 0.25rem;
-}
-
-.cd-label {
-    color: #165638;
-    font-weight: 600;
-    font-size: 0.75rem;
-}
-
-.cd-value {
-    color: #111827;
-    font-size: 0.875rem;
+/* Form Actions */
+.bill-form-container form > div:last-child {
+  display: flex;
+  gap: 12px;
+  margin-top: 24px;
 }
 
 /* Responsive Design */
-@media (max-width: 1024px) {
-    .bill-top-split {
-        grid-template-columns: 1fr;
-    }
-    .customer-details-grid {
-        grid-template-columns: 1fr;
-    }
+@media (max-width: 1200px) {
+  .bill-top-split {
+    grid-template-columns: 1fr;
+  }
+  
+  .customer-details-card {
+    position: relative;
+    top: 0;
+  }
+  
+  .bill-items-header {
+    grid-template-columns: 40px 1.5fr 1fr 0.8fr 0.8fr 1fr 0.8fr 1fr;
+    font-size: 12px;
+  }
+  
+  .bill-items {
+    grid-template-columns: 40px 1.5fr 1fr 0.8fr 0.8fr 1fr 0.8fr 1fr;
+  }
+}
+
+@media (max-width: 968px) {
+  .bill-items-header {
+    grid-template-columns: 40px 1.2fr 0.8fr 0.7fr 0.7fr 0.9fr 0.7fr 0.9fr;
+    font-size: 11px;
+    padding: 10px 12px;
+  }
+  
+  .bill-items {
+    grid-template-columns: 40px 1.2fr 0.8fr 0.7fr 0.7fr 0.9fr 0.7fr 0.9fr;
+    padding: 10px 12px;
+  }
+  
+  .bill-item-field input {
+    padding: 8px 10px;
+    font-size: 13px;
+  }
 }
 
 @media (max-width: 768px) {
-    .bill-form-container {
-        padding: 1.25rem;
-    }
-
-    .form-grid {
-        grid-template-columns: 1fr;
-    }
-
-    /* Hide desktop header; turn each row into a card */
-    .bill-items-header { display: none; }
-    .bill-items {
-        display: block;
-        border: 1px solid #e5e7eb;
-        border-radius: 0.5rem;
-        padding: 0.75rem;
-        background: #ffffff;
-        margin-bottom: 0.75rem;
-    }
-    .bill-item-field {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        gap: 0.75rem;
-        padding: 0.5rem 0.25rem;
-        border-bottom: 1px solid #eee;
-    }
-    .bill-item-field:last-child { border-bottom: none; }
-    .bill-item-field .mobile-label {
-        display: inline-block;
-        font-weight: 600;
-        color: #374151;
-        flex: 0 0 40%;
-        max-width: 50vw;
-    }
-    .bill-item-field select,
-    .bill-item-field input {
-        flex: 1 1 60%;
-        min-width: 0;
-    }
-
-    .bill-items select,
-    .bill-items input {
-        padding: 0.375rem;
-        font-size: 0.8125rem;
-    }
-
-    .buttons-add-delete {
-        flex-direction: column;
-    }
-
-    .bill-add-item-button,
-    .bill-delete-item-button,
-    .bill-form-button {
-        width: 100%;
-    }
+  .bill-form-container {
+    padding: 16px;
+  }
+  
+  .bill-form-container h3 {
+    font-size: 24px;
+  }
+  
+  .form-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+    padding: 16px;
+  }
+  
+  .bill-items-header {
+    display: none;
+  }
+  
+  .bill-items {
+    grid-template-columns: 1fr;
+    gap: 8px;
+    padding: 16px;
+    background: #ffffff;
+    border: 2px solid #e5e7eb;
+    margin-bottom: 12px;
+  }
+  
+  .bill-item-field {
+    display: grid;
+    grid-template-columns: 100px 1fr;
+    gap: 8px;
+    align-items: center;
+  }
+  
+  .mobile-label {
+    display: block;
+    font-size: 12px;
+    font-weight: 600;
+    color: #6b7280;
+    text-transform: uppercase;
+  }
+  
+  .buttons-add-delete {
+    flex-direction: column;
+  }
+  
+  .bill-form-container form > div:last-child {
+    flex-direction: column;
+  }
+  
+  .dropdown-menu {
+    max-height: 200px;
+  }
+  
+  .totals-section h4 {
+    font-size: 14px;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+  }
+  
+  .grand-total-text {
+    font-size: 18px !important;
+  }
 }
 
 @media (max-width: 480px) {
-    .bill-form-container {
-        padding: 0.9375rem;
-    }
-
-    .bill-form-container h3 {
-        font-size: 1.375rem;
-    }
-
-    /* No horizontal scrolling on smallest devices */
-    .bill-items-table { overflow-x: visible; }
-    .bill-items-header,
-    .bill-items { min-width: 0; }
+  .bill-form-container {
+    padding: 12px;
+  }
+  
+  .bill-form-container h3 {
+    font-size: 20px;
+  }
+  
+  .customer-details-card {
+    padding: 16px;
+  }
+  
+  .form-grid {
+    padding: 12px;
+  }
+  
+  .bill-items-table {
+    padding: 12px;
+  }
+  
+  .totals-section {
+    padding: 16px;
+  }
 }
