@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <style>
+        {{{css}}}
+    </style>
+</head>
+<body>
+    <div class="bill-container">
+        <div class="bill-header">
+            <div class="header-left">
+                <h3>GSTIN: {{company.companyGstNumber}}</h3>
+                <p>{{company.companyAddress}}</p>
+            </div>
+            <div class="header-center">
+                <h1>{{company.companyName}}</h1>
+                <p>TAX INVOICE</p>
+            </div>
+            <div class="header-right">
+                <h3>{{copyType}}</h3>
+                <p>{{company.companyAddress}}</p>
+            </div>
+        </div>
+
+        <div class="customer-details">
+            <div class="customer-personal-details">
+                <h4><strong>M/s: </strong>{{customer.customerName}}</h4>
+                <div class="customer-address-details">
+                    <p><strong>Address:</strong> {{customer.billingAddress}}</p>
+                    <p><strong>GSTIN:</strong> {{customer.gstNumber}}</p>
+                    <p><strong>State Code:</strong> {{customer.stateCode}}</p>
+                </div>
+            </div>
+            <div class="vertical-line"></div>
+            <div class="bill-information">
+                <p><strong>Bill No. :</strong> {{billNo}}</p>
+                <p><strong>Bill Date:</strong> {{billDate}}</p>
+                <p><strong>Delivery At:</strong> {{invoice.deliveryAt}}</p>
+                <p><strong>Transport:</strong> {{invoice.transport}}</p>
+                <p><strong>L.R. No.:</strong> {{invoice.lrNumber}}</p>
+            </div>
+        </div>
+
+        <div class="table-div">
+            <table class="invoice-view-table">
+                <thead>
+                    <tr>
+                        <th>Sr. No.</th>
+                        <th>Product Name</th>
+                        <th>HSN Code</th>
+                        <th>Quantity</th>
+                        <th>UOM</th>
+                        <th>Rate</th>
+                        <th>Amount</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {{#each items}}
+                    <tr>
+                        <td>{{this.srNo}}</td>
+                        <td>{{this.productName}}</td>
+                        <td>{{this.hsnCode}}</td>
+                        <td>{{this.quantity}}</td>
+                        <td>{{this.uom}}</td>
+                        <td>{{this.rate}}</td>
+                        <td>{{this.amount}}</td>
+                    </tr>
+                    {{/each}}
+                    {{#each emptyRows}}
+                    <tr class="empty-row">
+                        <td>&nbsp;</td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                    {{/each}}
+                </tbody>
+            </table>
+        </div>
+
+        <div class="customer-bank-totals-details">
+            <div class="bank-details">
+                <p><strong>Bank Details</strong></p>
+                <p><strong>Bank Name:</strong> {{company.branchName}}</p>
+                <p><strong>Account No:</strong> {{company.companyAccountNumber}}</p>
+                <p><strong>IFSC Code:</strong> {{company.ifscCode}}</p>
+                <p><strong>Branch Name:</strong> {{company.branchName}}</p>
+            </div>
+            <div class="totals-details">
+                <div>
+                    <span>Total ASSE. VALUE: ₹{{totals.totalAssesValue}}</span>
+                </div>
+                {{#if isGst}}
+                    {{#if totals.hasIgst}}
+                        <div>
+                            <span>IGST({{totals.igstRate}}%): ₹{{totals.igstAmount}}</span>
+                        </div>
+                    {{else}}
+                        <div>
+                            <span>SGST({{totals.sgstRate}}%): ₹{{totals.sgstAmount}}</span>
+                        </div>
+                        <div>
+                            <span>CGST({{totals.cgstRate}}%): ₹{{totals.cgstAmount}}</span>
+                        </div>
+                        <div>
+                            <span>IGST(0%): ₹0.00</span>
+                        </div>
+                    {{/if}}
+                {{/if}}
+                <div class="grand-total">
+                    <span>Bill VALUE: ₹{{totals.billValue}}</span>
+                </div>
+            </div>
+        </div>
+        <p class="amount-rupees-details">
+            <strong>Rupees: </strong>{{amountInWords}}
+        </p>
+
+        <div class="bill-footer">
+            <div class="terms-and-conditions-head">
+                <h4>Terms & Conditions:</h4>
+                <div class="terms">
+                    <p><strong>1. </strong>Goods once sold will not be taken back.</p>
+                    <p><strong>2. </strong>Our responsibility ends when the goods leave premises.</p>
+                    <p><strong>3. </strong>Overdue interest will be 18% per annum.</p>
+                    <p><strong>4. </strong>Subject to Rajkot Jurisdiction.</p>
+                </div>
+            </div>
+            <div class="bill-authorize-sign">
+                <p><strong>For, {{company.companyName}}</strong></p>
+                <p><strong>Authorised Signature</strong></p>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

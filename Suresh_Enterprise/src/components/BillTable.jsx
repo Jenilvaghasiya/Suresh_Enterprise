@@ -6,6 +6,7 @@ import {
   getCustomers,
   getCompanies,
   safeApiCall,
+  downloadInvoicePDF,
 } from "../services/api";
 import { toast } from "../utils/toast";
 import Loader from "./Loader";
@@ -188,35 +189,36 @@ const BillTable = ({ refreshTrigger, onEdit }) => {
   };
 
   const handleGenerateBill = async (invoice, copyType) => {
-    setSelectedInvoice(invoice);
-    setCurrentCopyType(copyType);
-
-    setTimeout(async () => {
-      if (billRef.current) {
-        try {
-          const canvas = await html2canvas(billRef.current, { scale: 2 });
-          const imgData = canvas.toDataURL("image/png");
-
-          const pdf = new jsPDF("p", "mm", "a4");
-          const imgProps = pdf.getImageProperties(imgData);
-          const pdfWidth = pdf.internal.pageSize.getWidth();
-          const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
-
-          pdf.addImage(imgData, "PNG", 0, 0, pdfWidth, pdfHeight);
-          const formattedNo = formatBillNoAdmin(invoice);
-          pdf.save(`Invoice_${formattedNo}_${copyType}.pdf`);
-
-          toast.success(`${copyType} bill generated successfully!`);
-
-          setSelectedInvoice(null);
-          setCurrentCopyType("Original");
-        } catch (error) {
-          console.error("Error generating PDF:", error);
-          toast.error("Failed to generate PDF");
-        }
-      }
-    }, 300);
-  };
+  try {
+    toast.info(`Generating ${copyType} PDF...`);
+    
+    // Call the server-side PDF generation API
+    const response = await downloadInvoicePDF(invoice.id, copyType);
+    
+    // Create a blob from the response
+    const blob = new Blob([response.data], { type: 'application/pdf' });
+    
+    // Create a download link and trigger download
+    const url = window.URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    
+    const formattedNo = formatBillNoAdmin(invoice);
+    link.download = `Invoice_${formattedNo}_${copyType}.pdf`;
+    
+    document.body.appendChild(link);
+    link.click();
+    
+    // Cleanup
+    document.body.removeChild(link);
+    window.URL.revokeObjectURL(url);
+    
+    toast.success(`${copyType} bill generated successfully!`);
+  } catch (error) {
+    console.error("Error generating PDF:", error);
+    toast.error(`Failed to generate ${copyType} PDF. Please try again.`);
+  }
+};
 
   // Handle customer selection
   const handleCustomerToggle = (customerId) => {

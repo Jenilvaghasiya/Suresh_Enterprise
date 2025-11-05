@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API_BASE_URL = import.meta.env?.VITE_API_URL || "https://suresh-enterprise.onrender.com/api";
+const API_BASE_URL = import.meta.env?.VITE_API_URL || "http://localhost:3000/api";
 export const API_ORIGIN = API_BASE_URL.replace(/\/api\/?$/, "");
 
 const API = axios.create({
@@ -73,3 +73,16 @@ export const addPayment = (data) => API.post("/payments", data);
 export const getPaymentsByCustomer = (customerId) => API.get(`/payments/customer/${customerId}`);
 export const getCustomerBalance = (customerId) => API.get(`/payments/balance/${customerId}`);
 export const createRazorpayOrder = (data) => API.post("/payments/razorpay/order", data);
+
+export const downloadInvoicePDF = async (invoiceId, copyType = 'Original') => {
+  try {
+    const response = await API.get(`/invoices/${invoiceId}/pdf`, {
+      params: { copyType },
+      responseType: 'blob',
+    });
+    return response;
+  } catch (error) {
+    console.error('Error downloading PDF:', error);
+    throw error;
+  }
+};

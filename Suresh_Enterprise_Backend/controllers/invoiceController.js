@@ -5,12 +5,14 @@ const Customers = require("../models/customer");
 const CompanyProfiles = require("../models/companyProfile");
 const Products = require("../models/product");
 const sequelize = require("../config/db");
+const pdfService = require("../service/pdfService")
 const {
     isValidBillDate,
     isValidUom,
     isValidAmount,
     isHsnCode,
 } = require("../utils/validator");
+
 
 // Helper function to calculate financial year
 function calculateFinancialYear(billDate) {
@@ -555,6 +557,78 @@ exports.deleteInvoiceById = async (req, res, next) => {
         });
     } catch (error) {
         console.error("Error deleting invoice:", error);
+        next(error);
+    }
+};
+
+exports.generateInvoicePDF = async (req, res, next) => {
+    try {
+        const { copyType = 'Original' } = req.query;
+        
+        const invoice = await Invoices.findByPk(req.params.id, {
+            include: [
+                {
+                    model: Customers,
+                    attributes: ["id", "customerName", "billingAddress", "gstNumber", "stateCode"]
+                },
+                {
+                    model: CompanyProfiles,
+                    attributes: ["id", "companyName", "companyGstNumber", "companyAddress", "branchName", "companyAccountNumber", "ifscCode"]
+                },
+                {
+                    model: InvoiceItems,
+                    as: "invoiceItems",
+                    attributes: ["id", "invoiceId", "productId", "hsnCode", "uom", "quantity", "rate", "amount"],
+                    include: [
+                        {
+                            model: Products,
+                            as: "product",
+                            attributes: ["id", "productName", "hsnCode", "uom", "price"]
+                        }
+                    ]
+                }
+            ]
+        });
+
+        if (!invoice) {
+            return res.status(404).json({
+                success: false,
+                error: "Invoice not found."
+            });
+        }
+
+        // Fallback: if associations failed (e.g., FK type mismatch), fetch explicitly
+        if (!invoice.CompanyProfile) {
+            const rawCompId = invoice.companyProfileId != null ? String(invoice.companyProfileId) : '';
+            const compIdPadded = rawCompId.padStart(4, '0');
+            let company = null;
+            if (compIdPadded) {
+                company = await CompanyProfiles.findByPk(compIdPadded, {
+                    attributes: ["id", "companyName", "companyGstNumber", "companyAddress", "branchName", "companyAccountNumber", "ifscCode"]
+                });
+            }
+            if (!company && rawCompId) {
+                company = await CompanyProfiles.findByPk(rawCompId, {
+                    attributes: ["id", "companyName", "companyGstNumber", "companyAddress", "branchName", "companyAccountNumber", "ifscCode"]
+                });
+            }
+            if (company) invoice.setDataValue('CompanyProfile', company);
+        }
+        if (!invoice.Customer && invoice.customerId) {
+            const customer = await Customers.findByPk(invoice.customerId, {
+                attributes: ["id", "customerName", "billingAddress", "gstNumber", "stateCode"]
+            });
+            if (customer) invoice.setDataValue('Customer', customer);
+        }
+
+        const pdfBuffer = await pdfService.generateBillPDF(invoice, copyType);
+
+        res.setHeader('Content-Type', 'application/pdf');
+        res.setHeader('Content-Disposition', `attachment; filename=invoice-${invoice.invoiceNumber}.pdf`);
+        res.send(pdfBuffer);
+
+    } catch (error) {
+        console.error("Error generating invoice PDF:", error);
         next(error);
     }
 };
