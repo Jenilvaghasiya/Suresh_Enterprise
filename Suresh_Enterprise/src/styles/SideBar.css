@@ -15,7 +15,7 @@
   left: 0;
   height: 100vh;
   height: 100dvh; /* Dynamic viewport height for mobile */
-  width: 17.5rem; /* 280px */
+  width: 14rem; /* 224px: slimmer on desktop to save space */
   background-color: var(--sidebar-bg);
   color: var(--sidebar-text);
   display: flex;
@@ -53,7 +53,7 @@
 .sidebar-logo {
   display: block;
   margin: 0 auto;
-  max-height: 150px; /* desktop/tablet */
+  max-height: 96px; /* more compact on desktop */
   width: auto;
 }
 
@@ -117,7 +117,7 @@
 /* Icon + text */
 .sidebar-icon {
   color: white;
-  font-size: 1.3rem;
+  font-size: 1.1rem; /* slightly smaller icons */
   margin-right: 0.625rem; /* 10px */
   filter: brightness(0) invert(1);
   /* This will make emojis white */
@@ -158,7 +158,7 @@
   align-items: center;
   justify-content: center;
   width: 100%;
-  padding: 0.625rem 0.9375rem; /* 10px 15px */
+  padding: 0.5rem 0.75rem; /* smaller button on desktop */
   margin-bottom: 0.625rem; /* 10px */
   background-color: rgba(255, 255, 255, 0.1);
   color: var(--sidebar-text);
@@ -166,7 +166,7 @@
   border-radius: 8px;
   cursor: pointer;
   transition: background var(--transition-speed);
-  font-size: 0.95rem;
+  font-size: 0.875rem;
 }
 
 .sidebar-logout-btn:hover {
@@ -199,7 +199,7 @@
 
 /* When sidebar open, move toggle button */
 .sidebar.open~.sidebar-toggle {
-  left: calc(17.5rem + 1.25rem);
+  left: calc(14rem + 1.25rem);
   z-index: 1150;
   /* below sidebar, above overlay */
 }
@@ -219,7 +219,7 @@
 @media (max-width: 768px) {
   .sidebar {
     transform: translateX(-100%);
-    width: 17.5rem;
+    width: 17.5rem; /* keep mobile drawer width */
     max-width: 85vw; /* Prevent sidebar from being too wide on small screens */
   }
 
