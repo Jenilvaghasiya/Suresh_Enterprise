@@ -83,6 +83,7 @@ const SideBar = ({ user, onLogout }) => {
     { to: "/gst-masters", icon: faFileInvoiceDollar, text: "GST Master" },
     { to: "/companies", icon: faBuilding, text: "Company Profile" },
     { to: "/invoice-form", icon: faFileInvoice, text: "Invoices" },
+    { to: "/ledger", icon: faFileInvoiceDollar, text: "Ledger Report" },
     { to: "/users", icon: faUserCog, text: "Users" },
   ];
 

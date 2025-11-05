@@ -49,6 +49,9 @@ const PaymentPage = () => {
   const [chequeDate, setChequeDate] = useState("");
   const [bankName, setBankName] = useState("");
   const [ifsc, setIfsc] = useState("");
+  const [isMobile, setIsMobile] = useState(() => (
+    typeof window !== "undefined" && window.matchMedia('(max-width: 640px)').matches
+  ));
 
   const currentUser = useMemo(() => {
     try { return JSON.parse(localStorage.getItem("user") || "null"); } catch { return null; }
@@ -75,6 +78,19 @@ const PaymentPage = () => {
     };
     loadCustomers();
   }, [isCustomerUser, currentUser, preselectCustomerId]);
+
+  // Track mobile viewport
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const mq = window.matchMedia('(max-width: 640px)');
+    const handler = (e) => setIsMobile(e.matches);
+    if (mq.addEventListener) mq.addEventListener('change', handler);
+    else mq.addListener(handler);
+    return () => {
+      if (mq.removeEventListener) mq.removeEventListener('change', handler);
+      else mq.removeListener(handler);
+    };
+  }, []);
 
   // Load company id when customer selected
   useEffect(() => {
@@ -150,7 +166,7 @@ const PaymentPage = () => {
       cheque_date: mode === "Cheque" ? chequeDate || null : null,
       bank_name: mode === "Cheque" ? bankName || null : null,
       ifsc_code: mode === "Cheque" ? ifsc || null : null,
-      invoiceId: isCustomerUser && selectedInvoiceId ? Number(selectedInvoiceId) : null,
+      invoiceId: null,
     };
     const [res, err] = await safeApiCall(addPayment, payload);
     setSubmitting(false);
@@ -162,6 +178,7 @@ const PaymentPage = () => {
     // Refresh balance
     const [bal] = await safeApiCall(getCustomerBalance, selectedCustomerId);
     setBalance(bal?.data || balance);
+    navigate(-1);
   };
 
   // Razorpay checkout
@@ -213,12 +230,13 @@ const PaymentPage = () => {
             amount: Number(amount),
             mode_payment: "Online",
             remarks: `Razorpay: ${response.razorpay_payment_id}`,
-            invoiceId: isCustomerUser && selectedInvoiceId ? Number(selectedInvoiceId) : null,
+            invoiceId: null,
           };
           await safeApiCall(addPayment, payload);
           const [bal] = await safeApiCall(getCustomerBalance, selectedCustomerId);
           setBalance(bal?.data || balance);
           resetForm();
+          navigate(-1);
         },
         prefill: {
           name: "",
@@ -247,12 +265,13 @@ const PaymentPage = () => {
     <div style={{
       maxWidth: 900,
       margin: "0 auto",
-      padding: "24px",
+      padding: isMobile ? "16px" : "24px",
       fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, sans-serif"
     }}>
       {/* Header */}
       <div style={{
-        marginBottom: 32
+        marginBottom: 32,
+        position: "relative"
       }}>
         <h2 style={{
           fontSize: 28,
@@ -266,6 +285,30 @@ const PaymentPage = () => {
           margin: 0,
           fontSize: 14
         }}>Process customer payments securely</p>
+        <button
+          type="button"
+          aria-label="Close"
+          onClick={() => navigate(-1)}
+          style={{
+            position: "absolute",
+            top: 0,
+            right: 0,
+            width: 36,
+            height: 36,
+            borderRadius: 8,
+            border: "1px solid #e5e7eb",
+            background: "#ffffff",
+            color: "#6b7280",
+            cursor: "pointer",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            fontSize: 20,
+            lineHeight: 1
+          }}
+        >
+          ×
+        </button>
       </div>
 
       {/* Error Alert */}
@@ -297,7 +340,7 @@ const PaymentPage = () => {
       }}>
         <div style={{
           display: "grid",
-          gridTemplateColumns: "1fr 1fr",
+          gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr",
           gap: 20
         }}>
           <div>
@@ -371,7 +414,7 @@ const PaymentPage = () => {
       }}>
         <div style={{
           display: "grid",
-          gridTemplateColumns: "1fr 1fr",
+          gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr",
           gap: 20,
           marginBottom: 20
         }}>
@@ -443,7 +486,7 @@ const PaymentPage = () => {
               <option>Others</option>
             </select>
           </div>
-          {isCustomerUser && filteredInvoices.length > 0 && (
+          {false && (
             <div className="payment-grid-full">
               <label style={{
                 display: "block",
