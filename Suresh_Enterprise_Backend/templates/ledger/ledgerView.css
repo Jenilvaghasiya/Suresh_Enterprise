@@ -1,0 +1,22 @@
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:Arial,Helvetica,sans-serif;margin:0;padding:20px}
+.ledger-container{width:100%;max-width:1000px;margin:0 auto;border:2px solid #000;padding:20px}
+.ledger-header{text-align:center;border-bottom:2px solid #000;padding-bottom:15px;margin-bottom:15px}
+.ledger-header h1{font-size:28px;margin:5px 0;text-transform:uppercase}
+.ledger-header p{margin:3px 0;font-size:14px}
+.customer-section{display:flex;justify-content:space-between;border-bottom:2px solid #000;padding-bottom:15px;margin-bottom:15px}
+.customer-details{flex:1}
+.customer-details h3{font-size:16px;margin-bottom:8px;color:#333}
+.customer-details p{margin:4px 0;font-size:14px}
+.report-title{flex:1;text-align:right;display:flex;flex-direction:column;justify-content:center}
+.report-title h2{font-size:24px;color:#000;margin:0}
+.ledger-table{width:100%;border-collapse:collapse;margin-bottom:15px;font-size:14px}
+.ledger-table thead th{background-color:#f0f0f0;border:2px solid #000;padding:10px 8px;text-align:center;font-weight:700;font-size:14px}
+.ledger-table tbody td{border:1px solid #000;padding:8px;text-align:center;vertical-align:middle;min-height:35px}
+.ledger-table tbody tr:nth-child(even){background-color:#fafafa}
+.closing-balance{border:2px solid #000;border-bottom:none;padding:12px 15px;background-color:#f8f8f8}
+.closing-balance p{font-size:16px;font-weight:700;text-align:right;margin:0}
+.closing-balance span{color:#2c5282}
+.footer-section{border:2px solid #000;border-top:1px solid #000;padding:15px}
+.footer-section h4{font-size:15px;margin-bottom:10px;text-decoration:underline}
+.footer-section p{font-size:12px;margin:5px 0;line-height:1.6}

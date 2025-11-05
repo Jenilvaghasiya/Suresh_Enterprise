@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <style>
+        {{{css}}}
+    </style>
+</head>
+<body>
+  <div class="ledger-container">
+    <div class="ledger-header">
+      <h1>{{company.name}}</h1>
+      {{#if company.address}}
+      <p>{{company.address}}</p>
+      {{/if}}
+      {{#if company.gstin}}
+      <p><strong>GSTIN:</strong> {{company.gstin}}</p>
+      {{/if}}
+    </div>
+
+    <div class="customer-section">
+      <div class="customer-details">
+        <h3>Party Details:</h3>
+        <p><strong>Customer Name:</strong> {{customer.name}}</p>
+        {{#if customer.companyName}}
+        <p><strong>Company Name:</strong> {{customer.companyName}}</p>
+        {{/if}}
+        {{#if customer.address}}
+        <p><strong>Address:</strong> {{customer.address}}</p>
+        {{/if}}
+        {{#if customer.gstin}}
+        <p><strong>GSTIN:</strong> {{customer.gstin}}</p>
+        {{/if}}
+      </div>
+      <div class="report-title">
+        <h2>LEDGER REPORT</h2>
+        {{#if dateRange}}
+        <p style="font-size: 14px; margin-top: 10px;">{{dateRange}}</p>
+        {{/if}}
+      </div>
+    </div>
+
+    <table class="ledger-table">
+      <thead>
+        <tr>
+          <th>Sr. No.</th>
+          <th>Date</th>
+          <th>Reference</th>
+          <th>Credit (₹)</th>
+          <th>Debit (₹)</th>
+          <th>Balance (₹)</th>
+        </tr>
+      </thead>
+      <tbody>
+        {{#if openingRow}}
+        <tr>
+          <td>0</td>
+          <td>{{openingRow.date}}</td>
+          <td>Opening Balance</td>
+          <td>-</td>
+          <td>-</td>
+          <td>{{openingRow.balance}}</td>
+        </tr>
+        {{/if}}
+        {{#each ledgerEntries}}
+        <tr>
+          <td>{{this.srNo}}</td>
+          <td>{{this.date}}</td>
+          <td>{{this.reference}}</td>
+          <td>{{#if this.credit}}{{this.credit}}{{else}}-{{/if}}</td>
+          <td>{{#if this.debit}}{{this.debit}}{{else}}-{{/if}}</td>
+          <td>{{this.balance}}</td>
+        </tr>
+        {{/each}}
+      </tbody>
+    </table>
+
+    <div class="closing-balance">
+      <p>Closing Balance: <span>₹ {{closingBalance}}</span></p>
+    </div>
+
+    {{#if termsAndConditions}}
+    <div class="footer-section">
+      <h4>Terms & Conditions:</h4>
+      {{#each termsAndConditions}}
+      <p><strong>{{this.number}}.</strong> {{this.text}}</p>
+      {{/each}}
+    </div>
+    {{/if}}
+  </div>
+</body>
+</html>

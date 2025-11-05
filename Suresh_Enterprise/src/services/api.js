@@ -86,3 +86,18 @@ export const downloadInvoicePDF = async (invoiceId, copyType = 'Original') => {
     throw error;
   }
 };
+
+export const downloadLedgerPDF = async ({ customerId, companyProfileId, fromDate, toDate }) => {
+  try {
+    const response = await API.post('/ledger/pdf', {
+      customerId,
+      companyProfileId,
+      fromDate,
+      toDate
+    }, { responseType: 'blob' });
+    return response;
+  } catch (error) {
+    console.error('Error downloading Ledger PDF:', error);
+    throw error;
+  }
+};

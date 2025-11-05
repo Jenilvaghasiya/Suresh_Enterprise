@@ -1,7 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
-import html2canvas from "html2canvas";
-import jsPDF from "jspdf";
-import { safeApiCall, getCustomers, getInvoices, getPaymentsByCustomer } from "../services/api";
+import { safeApiCall, getCustomers, getInvoices, getPaymentsByCustomer, downloadLedgerPDF } from "../services/api";
 import Loader from "./Loader";
 
 const LedgerReport = () => {
@@ -103,17 +101,23 @@ const LedgerReport = () => {
 
   const handleExportPDF = async () => {
     try {
-      const node = ledgerRef.current;
-      if (!node) return;
-      const canvas = await html2canvas(node, { scale: 2 });
-      const imgData = canvas.toDataURL("image/png");
-      const pdf = new jsPDF("p", "mm", "a4");
-      const imgProps = pdf.getImageProperties(imgData);
-      const pdfWidth = pdf.internal.pageSize.getWidth();
-      const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
-      pdf.addImage(imgData, "PNG", 0, 0, pdfWidth, pdfHeight);
-      const custName = customers.find(c => String(c.id) === String(selectedCustomerId))?.customerName || "All";
-      pdf.save(`Ledger_${custName}.pdf`);
+      if (!selectedCustomerId) return;
+      const response = await downloadLedgerPDF({
+        customerId: Number(selectedCustomerId),
+        companyProfileId: undefined,
+        fromDate: undefined,
+        toDate: undefined,
+      });
+      const blob = response.data;
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      const custName = customers.find(c => String(c.id) === String(selectedCustomerId))?.customerName || "Ledger";
+      a.href = url;
+      a.download = `Ledger_${custName}.pdf`;
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
     } catch (e) {
       console.error("PDF export failed", e);
     }

@@ -15,6 +15,7 @@ const helmet = require("helmet");
 const morgan = require("morgan");
 const app = express();
 const userRoutes = require('./routes/userRoutes');
+const ledgerRoutes = require('./routes/ledgerRoutes');
 
 dotenv.config();
 const PORT = process.env.PORT || 3000;
@@ -42,7 +43,7 @@ app.use("/api/invoices", invoiceRoutes);
 app.use('/api/users', userRoutes);
 const paymentRoutes = require('./routes/paymentRoutes');
 app.use('/api/payments', paymentRoutes);
-
+app.use('/api/ledger', ledgerRoutes);
 
 app.use((err, req, res, next) => {
     console.error("Error:", err.stack);
