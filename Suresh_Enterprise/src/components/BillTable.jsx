@@ -35,6 +35,26 @@ const BillTable = ({ refreshTrigger, onEdit }) => {
     }
   });
 
+  // Filter states
+  const todayStr = (() => {
+    const d = new Date();
+    const yyyy = d.getFullYear();
+    const mm = String(d.getMonth() + 1).padStart(2, "0");
+    const dd = String(d.getDate()).padStart(2, "0");
+    return `${yyyy}-${mm}-${dd}`;
+  })();
+  const [startDate, setStartDate] = useState(todayStr);
+  const [endDate, setEndDate] = useState(todayStr);
+  const [selectedCustomers, setSelectedCustomers] = useState([]);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [customerSearchTerm, setCustomerSearchTerm] = useState("");
+  const [appliedFilters, setAppliedFilters] = useState({
+    startDate: todayStr,
+    endDate: todayStr,
+    customers: []
+  });
+  const dropdownRef = useRef(null);
+
   // Get user data from localStorage
   const getUserData = () => {
     try {
@@ -91,7 +111,11 @@ const BillTable = ({ refreshTrigger, onEdit }) => {
         setProducts(productsRes?.data || []);
       }
       if (!customersError) {
-        setCustomers(customersRes?.data || []);
+        const allCustomers = customersRes?.data || [];
+        const scopedCustomers = (userData?.userType === "Customer User")
+          ? allCustomers.filter((c) => c.company_id === userData?.company_id)
+          : allCustomers;
+        setCustomers(scopedCustomers);
       }
       if (!companiesError) {
         setCompanies(companiesRes?.data || []);
@@ -101,6 +125,20 @@ const BillTable = ({ refreshTrigger, onEdit }) => {
     };
     fetchData();
   }, [refreshTrigger]);
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setIsDropdownOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
   
   // Get totals for display (prefer backend values, fallback to calculation)
   const getInvoiceTotals = (invoice) => {
@@ -180,20 +218,94 @@ const BillTable = ({ refreshTrigger, onEdit }) => {
     }, 300);
   };
 
-  // Filter invoices based on search term
+  // Handle customer selection
+  const handleCustomerToggle = (customerId) => {
+    if (customerId === "all") {
+      if (selectedCustomers.length === customers.length) {
+        setSelectedCustomers([]);
+      } else {
+        setSelectedCustomers(customers.map(c => c.id));
+      }
+    } else {
+      setSelectedCustomers(prev => {
+        if (prev.includes(customerId)) {
+          return prev.filter(id => id !== customerId);
+        } else {
+          return [...prev, customerId];
+        }
+      });
+    }
+  };
+
+  // Apply filters
+  const handleGenerateReport = () => {
+    setAppliedFilters({
+      startDate,
+      endDate,
+      customers: selectedCustomers
+    });
+    setCurrentPage(1);
+    toast.success("Filters applied successfully!");
+  };
+
+  // Clear filters
+  const handleClearFilters = () => {
+    setStartDate("");
+    setEndDate("");
+    setSelectedCustomers([]);
+    setAppliedFilters({
+      startDate: "",
+      endDate: "",
+      customers: []
+    });
+    setCurrentPage(1);
+    toast.info("Filters cleared");
+  };
+
+  // Filter invoices based on search term and applied filters
   const filteredInvoices = invoices.filter((invoice) => {
+    // Search term filter
     const searchLower = searchTerm.toLowerCase();
     const formattedNo = formatBillNoAdmin(invoice);
-    return (
+    const matchesSearch = 
       String(invoice.billNumber ?? "").toLowerCase().includes(searchLower) ||
       formattedNo.toLowerCase().includes(searchLower) ||
       invoice.Customer?.customerName?.toLowerCase().includes(searchLower) ||
       invoice.CompanyProfile?.companyName?.toLowerCase().includes(searchLower) ||
       invoice.deliveryAt?.toLowerCase().includes(searchLower) ||
       invoice.transport?.toLowerCase().includes(searchLower) ||
-      invoice.lrNumber?.toLowerCase().includes(searchLower)
-    );
+      invoice.lrNumber?.toLowerCase().includes(searchLower);
+
+    if (!matchesSearch) return false;
+
+    // Date filter
+    if (appliedFilters.startDate || appliedFilters.endDate) {
+      const billDate = new Date(invoice.billDate);
+      if (appliedFilters.startDate) {
+        const start = new Date(appliedFilters.startDate);
+        start.setHours(0, 0, 0, 0);
+        if (billDate < start) return false;
+      }
+      if (appliedFilters.endDate) {
+        const end = new Date(appliedFilters.endDate);
+        end.setHours(23, 59, 59, 999);
+        if (billDate > end) return false;
+      }
+    }
+
+    // Customer filter
+    if (appliedFilters.customers.length > 0) {
+      const customerId = invoice.customerId || invoice.customer_id || invoice.Customer?.id;
+      if (!appliedFilters.customers.includes(customerId)) return false;
+    }
+
+    return true;
   });
+
+  // Filter customers based on search term in dropdown
+  const filteredCustomersForDropdown = customers.filter(customer =>
+    customer.customerName?.toLowerCase().includes(customerSearchTerm.toLowerCase())
+  );
 
   // Pagination logic
   const indexOfLastItem = currentPage * itemsPerPage;
@@ -217,6 +329,121 @@ const BillTable = ({ refreshTrigger, onEdit }) => {
 
   return (
     <div className="bill-table-container">
+      {/* Filter Section */}
+      <div className="filter-section">
+        <h4 className="filter-title">Filter Invoices</h4>
+        
+        <div className="filters-grid">
+          {/* Start Date */}
+          <div>
+            <label className="form-label">
+              Start Date
+            </label>
+            <input
+              type="date"
+              value={startDate}
+              onChange={(e) => setStartDate(e.target.value)}
+            />
+          </div>
+
+          {/* End Date */}
+          <div>
+            <label className="form-label">
+              End Date
+            </label>
+            <input
+              type="date"
+              value={endDate}
+              onChange={(e) => setEndDate(e.target.value)}
+            />
+          </div>
+
+          {/* Customer Dropdown */}
+          <div ref={dropdownRef} className="dropdown" data-dropdown>
+            <label className="form-label">
+              Select Customers
+            </label>
+            <div className="dropdown-toggle" onClick={() => setIsDropdownOpen(!isDropdownOpen)}>
+              <span style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                {selectedCustomers.length === 0
+                  ? "Select customers..."
+                  : selectedCustomers.length === customers.length
+                  ? "All Customers Selected"
+                  : `${selectedCustomers.length} customer(s) selected`}
+              </span>
+              <span className="dropdown-caret">▼</span>
+            </div>
+
+            {isDropdownOpen && (
+              <div className="dropdown-menu-custom">
+                {/* Search box */}
+                <div className="dropdown-search">
+                  <input
+                    type="text"
+                    placeholder="Search customers..."
+                    value={customerSearchTerm}
+                    onChange={(e) => setCustomerSearchTerm(e.target.value)}
+                    onClick={(e) => e.stopPropagation()}
+                  />
+                </div>
+
+                {/* Select All option */}
+                <div className="dropdown-item select-all" onClick={(e) => { e.stopPropagation(); handleCustomerToggle("all"); }}>
+                  <input
+                    type="checkbox"
+                    checked={selectedCustomers.length === customers.length}
+                    onChange={() => {}}
+                  />
+                  Select All Customers
+                </div>
+
+                {/* Customer list */}
+                {filteredCustomersForDropdown.length > 0 ? (
+                  filteredCustomersForDropdown.map(customer => (
+                    <div className="dropdown-item" key={customer.id} onClick={(e) => { e.stopPropagation(); handleCustomerToggle(customer.id); }}>
+                      <input
+                        type="checkbox"
+                        checked={selectedCustomers.includes(customer.id)}
+                        onChange={() => {}}
+                      />
+                      {customer.customerName}
+                    </div>
+                  ))
+                ) : (
+                  <div className="dropdown-empty">
+                    No customers found
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+
+          {/* Search Button */}
+          <button onClick={handleGenerateReport} className="btn btn-primary">Search</button>
+
+          {/* Generate Report Button */}
+          <button onClick={handleGenerateReport} className="btn btn-primary">Generate Report</button>
+
+          {/* Clear Filters Button */}
+          <button onClick={handleClearFilters} className="btn btn-secondary">Clear Filters</button>
+        </div>
+
+        {/* Active filters display */}
+        {(appliedFilters.startDate || appliedFilters.endDate || appliedFilters.customers.length > 0) && (
+          <div className="active-filters">
+            <strong>Active Filters:</strong>
+            {appliedFilters.startDate && <span style={{ marginLeft: "10px" }}>Start: {new Date(appliedFilters.startDate).toLocaleDateString("en-GB")}</span>}
+            {appliedFilters.endDate && <span style={{ marginLeft: "10px" }}>End: {new Date(appliedFilters.endDate).toLocaleDateString("en-GB")}</span>}
+            {appliedFilters.customers.length > 0 && (
+              <span style={{ marginLeft: "10px" }}>
+                Customers: {appliedFilters.customers.length === customers.length ? "All" : appliedFilters.customers.length}
+              </span>
+            )}
+          </div>
+        )}
+      </div>
+
+      {/* Search Box */}
       <div className="bill-search-container" style={{ marginBottom: "20px" }}>
         <input
           type="text"
