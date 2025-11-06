@@ -4,8 +4,9 @@
   "main": "server.js",
   "scripts": {
     "dev": "nodemon server.js",
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "vite build"
+    "start": "node server.js",
+    "build": "vite build",
+    "postinstall": "npx puppeteer browsers install chrome"
   },
   "keywords": [],
   "author": "",
@@ -27,7 +28,7 @@
     "multer": "^2.0.2",
     "mysql2": "^3.15.1",
     "nodemon": "^3.1.10",
-    "puppeteer": "^24.28.0",
+    "puppeteer": "^24.3.0",
     "razorpay": "^2.9.6",
     "sequelize": "^6.37.7"
   }
