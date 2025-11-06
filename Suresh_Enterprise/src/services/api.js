@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API_BASE_URL = import.meta.env?.VITE_API_URL || "http://localhost:3000/api";
+const API_BASE_URL = import.meta.env?.VITE_API_URL || "https://suresh-enterprise.onrender.com/api";
 export const API_ORIGIN = API_BASE_URL.replace(/\/api\/?$/, "");
 
 const API = axios.create({
