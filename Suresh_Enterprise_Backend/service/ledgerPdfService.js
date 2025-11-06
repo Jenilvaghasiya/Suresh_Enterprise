@@ -104,6 +104,12 @@ class LedgerPDFService {
       openingBalance: payload.openingBalance || 0
     });
 
+    // Ensure one-page compact layout by default with placeholder rows
+    const targetRows = 11; // tuned for A4 layout and current CSS
+    const visibleRowsCount = ledgerEntries.length + (openingRow ? 1 : 0);
+    const emptyRowsCount = Math.max(0, targetRows - visibleRowsCount);
+    const emptyRows = Array(emptyRowsCount).fill({});
+
     const html = template({
       css: cssContent,
       company: payload.company || {},
@@ -111,6 +117,7 @@ class LedgerPDFService {
       dateRange: payload.dateRange || null,
       openingRow,
       ledgerEntries,
+      emptyRows,
       closingBalance: this.formatCurrency(closingBalance),
       termsAndConditions: payload.termsAndConditions || [
         { number: 1, text: 'All payments should be made within 30 days from the invoice date.' },

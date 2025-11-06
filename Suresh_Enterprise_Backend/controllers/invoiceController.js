@@ -6,6 +6,7 @@ const CompanyProfiles = require("../models/companyProfile");
 const Products = require("../models/product");
 const sequelize = require("../config/db");
 const pdfService = require("../service/pdfService")
+const billReportPdfService = require("../service/billReportPdfService");
 const {
     isValidBillDate,
     isValidUom,
@@ -228,6 +229,59 @@ exports.createInvoice = async (req, res, next) => {
     } catch (error) {
         await t.rollback();
         console.error("Error creating invoice:", error);
+        next(error);
+    }
+};
+
+// Generate consolidated Bill Report PDF
+exports.generateBillReportPDF = async (req, res, next) => {
+    try {
+        const { fromDate, toDate, customerIds = [], status } = req.body || {};
+
+        // Build where clause
+        const where = {};
+        if (fromDate || toDate) {
+            where.billDate = {};
+            if (fromDate) where.billDate[Sequelize.Op.gte] = new Date(fromDate);
+            if (toDate) where.billDate[Sequelize.Op.lte] = new Date(toDate);
+        }
+        if (typeof status === 'boolean') {
+            where.isActive = status;
+        }
+        if (Array.isArray(customerIds) && customerIds.length > 0) {
+            where.customerId = customerIds;
+        }
+
+        const invoices = await Invoices.findAll({
+            where,
+            include: [
+                { model: Customers, attributes: ["id", "customerName"] },
+                { model: CompanyProfiles, attributes: ["id", "companyName", "companyAddress"] },
+                { model: InvoiceItems, as: "invoiceItems", attributes: ["id"] }
+            ],
+            order: [["billDate", "ASC"], ["id", "ASC"]]
+        });
+
+        const payload = {
+            invoices: invoices.map(i => i.get({ plain: true })),
+            reportTitle: "Customer Invoice Report",
+            fromDate,
+            toDate,
+            customerNames: Array.from(new Set(invoices.map(i => i.Customer?.customerName).filter(Boolean))),
+            statusFilter: typeof status === 'boolean' ? (status ? 'Active' : 'Inactive') : 'All',
+            company: invoices[0]?.CompanyProfile ? {
+                name: invoices[0].CompanyProfile.companyName,
+                address: invoices[0].CompanyProfile.companyAddress
+            } : undefined
+        };
+
+        const pdfBuffer = await billReportPdfService.generateBillReportPDF({ ...payload });
+
+        res.setHeader('Content-Type', 'application/pdf');
+        res.setHeader('Content-Disposition', 'attachment; filename=bill-report.pdf');
+        res.send(pdfBuffer);
+    } catch (error) {
+        console.error("Error generating bill report PDF:", error);
         next(error);
     }
 };

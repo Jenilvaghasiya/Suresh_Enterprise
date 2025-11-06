@@ -101,3 +101,18 @@ export const downloadLedgerPDF = async ({ customerId, companyProfileId, fromDate
     throw error;
   }
 };
+
+export const downloadBillReportPDF = async ({ fromDate, toDate, customerIds, status }) => {
+  try {
+    const response = await API.post('/invoices/report/pdf', {
+      fromDate,
+      toDate,
+      customerIds,
+      status
+    }, { responseType: 'blob' });
+    return response;
+  } catch (error) {
+    console.error('Error downloading Bill Report PDF:', error);
+    throw error;
+  }
+};

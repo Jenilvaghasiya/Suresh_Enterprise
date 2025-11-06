@@ -7,6 +7,7 @@ import {
   getCompanies,
   safeApiCall,
   downloadInvoicePDF,
+  downloadBillReportPDF,
 } from "../services/api";
 import { toast } from "../utils/toast";
 import Loader from "./Loader";
@@ -63,6 +64,34 @@ const BillTable = ({ refreshTrigger, onEdit }) => {
       return userData;
     } catch {
       return null;
+    }
+  };
+
+  // Download consolidated report PDF
+  const handleDownloadReport = async () => {
+    try {
+      toast.info("Generating report PDF...");
+      const response = await downloadBillReportPDF({
+        fromDate: appliedFilters.startDate || undefined,
+        toDate: appliedFilters.endDate || undefined,
+        customerIds: appliedFilters.customers || [],
+        status: undefined,
+      });
+      const blob = new Blob([response.data], { type: 'application/pdf' });
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      const from = appliedFilters.startDate ? new Date(appliedFilters.startDate).toLocaleDateString('en-GB') : 'ALL';
+      const to = appliedFilters.endDate ? new Date(appliedFilters.endDate).toLocaleDateString('en-GB') : 'ALL';
+      link.download = `Bill_Report_${from}_to_${to}.pdf`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
+      toast.success("Report generated successfully!");
+    } catch (err) {
+      console.error(err);
+      toast.error("Failed to generate report PDF");
     }
   };
 
@@ -424,7 +453,7 @@ const BillTable = ({ refreshTrigger, onEdit }) => {
           <button onClick={handleGenerateReport} className="btn btn-primary">Search</button>
 
           {/* Generate Report Button */}
-          <button onClick={handleGenerateReport} className="btn btn-primary">Generate Report</button>
+          <button onClick={handleDownloadReport} className="btn btn-primary">Generate Report</button>
 
           {/* Clear Filters Button */}
           <button onClick={handleClearFilters} className="btn btn-secondary">Clear Filters</button>

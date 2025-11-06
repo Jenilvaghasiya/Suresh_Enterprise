@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <style>
+    {{{css}}}
+  </style>
+  <title>{{reportTitle}}</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  </head>
+<body>
+  <div class="report-container">
+    <!-- Header Section -->
+    <div class="report-header">
+      <h1>{{company.name}}</h1>
+      {{#if company.address}}<p>{{company.address}}</p>{{/if}}
+      {{#if company.gstin}}
+      <p><strong>GSTIN:</strong> {{company.gstin}} {{#if company.phone}}| <strong>Phone:</strong> {{company.phone}}{{/if}}</p>
+      {{/if}}
+      {{#if company.email}}<p><strong>Email:</strong> {{company.email}}</p>{{/if}}
+    </div>
+
+    <!-- Info Section -->
+    <div class="info-section">
+      <div class="customer-details">
+        <h3>Party Details:</h3>
+        <p><strong>Customer(s):</strong> {{customerFilter}}</p>
+      </div>
+      <div class="report-title-section">
+        <h2>{{reportTitle}}</h2>
+        {{#if dateRange}}<p><strong>Period:</strong> {{dateRange}}</p>{{/if}}
+        <p><strong>Status Filter:</strong> {{statusFilter}}</p>
+      </div>
+    </div>
+
+    <!-- Summary Section -->
+    <div class="summary-section">
+      <h3>Report Summary:</h3>
+      <div class="summary-grid">
+        <div class="summary-item"><strong>Total Invoices:</strong> {{summary.totalInvoices}}</div>
+        <div class="summary-item"><strong>Total Assessable Value:</strong> ₹ {{summary.totalAssessable}}</div>
+        <div class="summary-item"><strong>Total SGST:</strong> ₹ {{summary.totalSgst}}</div>
+        <div class="summary-item"><strong>Total CGST:</strong> ₹ {{summary.totalCgst}}</div>
+        <div class="summary-item"><strong>Total IGST:</strong> ₹ {{summary.totalIgst}}</div>
+        <div class="summary-item"><strong>Grand Total:</strong> ₹ {{summary.grandTotal}}</div>
+      </div>
+    </div>
+
+    <!-- Invoice Table -->
+    <table class="invoice-table">
+      <thead>
+        <tr>
+          <th>Sr. No.</th>
+          <th>Invoice No.</th>
+          <th>Bill Date</th>
+          <th>Customer Name</th>
+          <th>Deliver At</th>
+          <th>Transport</th>
+          <th>LR Number</th>
+          <th>Assess Value (₹)</th>
+          <th>SGST (₹)</th>
+          <th>CGST (₹)</th>
+          <th>IGST (₹)</th>
+        </tr>
+      </thead>
+      <tbody>
+        {{#each rows}}
+        <tr>
+          <td>{{this.srNo}}</td>
+          <td class="text-left">{{this.invoiceNumber}}</td>
+          <td>{{this.billDate}}</td>
+          <td class="text-left">{{this.customerName}}</td>
+          <td class="text-left">{{this.deliverAt}}</td>
+          <td class="text-left">{{this.transport}}</td>
+          <td>{{this.lrNumber}}</td>
+          <td class="text-right">{{this.assessValue}}</td>
+          <td class="text-right">{{this.sgst}}</td>
+          <td class="text-right">{{this.cgst}}</td>
+          <td class="text-right">{{this.igst}}</td>
+        </tr>
+        {{/each}}
+      </tbody>
+    </table>
+
+    <!-- Total Section -->
+    <div class="total-section">
+      <p>Grand Total: <span>₹ {{summary.grandTotal}}</span></p>
+    </div>
+
+    <!-- Footer Section -->
+    <div class="footer-section">
+      <h4>Report Information:</h4>
+      <p><strong>1.</strong> This is a system-generated report and does not require a signature.</p>
+      <p><strong>2.</strong> All amounts are in Indian Rupees (₹).</p>
+      <p><strong>3.</strong> For any queries, please contact: {{#if company.email}}{{company.email}}{{else}}accounts@example.com{{/if}}</p>
+
+      <div class="footer-info">
+        <p><strong>Generated on:</strong> {{generatedOn}}</p>
+        <p><strong>Page:</strong> 1 of 1</p>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

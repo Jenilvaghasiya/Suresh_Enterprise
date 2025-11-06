@@ -72,6 +72,16 @@
           <td>{{this.balance}}</td>
         </tr>
         {{/each}}
+        {{#each emptyRows}}
+        <tr>
+          <td>&nbsp;</td>
+          <td>&nbsp;</td>
+          <td>&nbsp;</td>
+          <td>&nbsp;</td>
+          <td>&nbsp;</td>
+          <td>&nbsp;</td>
+        </tr>
+        {{/each}}
       </tbody>
     </table>
 

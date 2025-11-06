@@ -6,7 +6,7 @@ const ledgerPdfService = require("../service/ledgerPdfService");
 
 exports.generateLedgerPDF = async (req, res, next) => {
   try {
-    const { customerId, companyProfileId, fromDate, toDate } = req.body;
+    let { customerId, companyProfileId, fromDate, toDate } = req.body;
 
     if (!customerId) {
       return res.status(400).json({ success: false, error: "customerId is required" });
@@ -16,6 +16,10 @@ exports.generateLedgerPDF = async (req, res, next) => {
     if (!customer) return res.status(404).json({ success: false, error: "Customer not found" });
 
     let company = null;
+    // If no companyProfileId is provided, try deriving from customer's company_id
+    if (!companyProfileId && customer?.company_id) {
+      companyProfileId = customer.company_id;
+    }
     if (companyProfileId) {
       company = await CompanyProfiles.findByPk(companyProfileId);
       if (!company) return res.status(404).json({ success: false, error: "Company not found" });
