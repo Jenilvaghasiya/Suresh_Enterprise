@@ -99,16 +99,20 @@ class BillReportPDFService {
       generatedOn: new Date().toLocaleString('en-IN', { hour12: false })
     });
 
+
 const browser = await puppeteer.launch({
   headless: true,
   args: [
     '--no-sandbox',
     '--disable-setuid-sandbox',
     '--disable-dev-shm-usage',
-    '--disable-gpu'
+    '--disable-gpu',
+    '--single-process',
+    '--no-zygote'
   ],
-  executablePath: process.env.PUPPETEER_EXECUTABLE_PATH || await puppeteer.executablePath()
+  executablePath: process.env.PUPPETEER_EXECUTABLE_PATH || (await puppeteer.executablePath())
 });
+
     const page = await browser.newPage();
     await page.setContent(html, { waitUntil: 'domcontentloaded' });
     const pdfBuffer = await page.pdf({
