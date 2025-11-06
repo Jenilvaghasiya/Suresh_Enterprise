@@ -70,6 +70,11 @@ const BillTable = ({ refreshTrigger, onEdit }) => {
   // Download consolidated report PDF
   const handleDownloadReport = async () => {
     try {
+      // Validation: do not allow generating when there are no invoices in view
+      if (!Array.isArray(filteredInvoices) || filteredInvoices.length === 0) {
+        toast.error("No invoices to include. Adjust filters or select customers.");
+        return;
+      }
       toast.info("Generating report PDF...");
       const response = await downloadBillReportPDF({
         fromDate: appliedFilters.startDate || undefined,
@@ -453,7 +458,14 @@ const BillTable = ({ refreshTrigger, onEdit }) => {
           <button onClick={handleGenerateReport} className="btn btn-primary">Search</button>
 
           {/* Generate Report Button */}
-          <button onClick={handleDownloadReport} className="btn btn-primary">Generate Report</button>
+          <button
+            onClick={handleDownloadReport}
+            className="btn btn-primary"
+            disabled={filteredInvoices.length === 0}
+            title={filteredInvoices.length === 0 ? "No invoices to include" : "Generate report PDF"}
+          >
+            Generate Report
+          </button>
 
           {/* Clear Filters Button */}
           <button onClick={handleClearFilters} className="btn btn-secondary">Clear Filters</button>
