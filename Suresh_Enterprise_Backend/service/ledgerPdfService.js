@@ -24,11 +24,20 @@ class LedgerPDFService {
     return `${dd}-${mm}-${yyyy}`;
   }
 
+  formatInvoiceNumberFull(inv) {
+    const compIdRaw = (inv.companyProfileId ?? inv.company_id ?? inv.CompanyProfileId ?? '');
+    const compId = String(compIdRaw).padStart(4, '0').slice(-4);
+    const gstFlag = String(inv.gst ?? '').slice(0, 1);
+    const invNum = String(inv.invoiceNumber ?? inv.billNumber ?? '').padStart(6, '0').slice(-6);
+    const year = String(inv.billYear ?? '').padStart(4, '0').slice(-4);
+    const full = compId + gstFlag + invNum + year;
+    return full || (inv.invoiceNumber || inv.billNumber || 'Invoice');
+  }
+
   buildTransactions({ invoices = [], payments = [], fromDate, toDate, openingBalance = 0 }) {
     const start = fromDate ? new Date(fromDate) : null;
     const end = toDate ? new Date(toDate) : null;
 
-    // Opening balance calculation: openingBalance + invoices before start - payments before start
     let opening = Number(openingBalance || 0);
     if (start) {
       const invBefore = invoices
@@ -52,7 +61,7 @@ class LedgerPDFService {
         .filter(inv => filterByRange(inv.billDate))
         .map(inv => ({
           date: new Date(inv.billDate),
-          reference: inv.invoiceNumber || inv.billNumber || 'Invoice',
+          reference: this.formatInvoiceNumberFull(inv),
           credit: Number(inv.billValue ?? inv.totalAssesValue ?? 0),
           debit: 0,
           type: 'invoice'
@@ -96,46 +105,53 @@ class LedgerPDFService {
     ]);
     const template = handlebars.compile(templateContent);
 
+    const effectiveFrom = payload.fromDate;
+    const effectiveTo = payload.toDate || new Date().toISOString().slice(0, 10);
+
     const { openingRow, ledgerEntries, closingBalance } = this.buildTransactions({
       invoices: payload.invoices || [],
       payments: payload.payments || [],
-      fromDate: payload.fromDate,
-      toDate: payload.toDate,
+      fromDate: effectiveFrom,
+      toDate: effectiveTo,
       openingBalance: payload.openingBalance || 0
     });
 
-    // Ensure one-page compact layout by default with placeholder rows
-    const targetRows = 11; // tuned for A4 layout and current CSS
-    const visibleRowsCount = ledgerEntries.length + (openingRow ? 1 : 0);
-    const emptyRowsCount = Math.max(0, targetRows - visibleRowsCount);
-    const emptyRows = Array(emptyRowsCount).fill({});
+    const from = effectiveFrom ? this.formatDateDDMMYYYY(effectiveFrom) : null;
+    const to = effectiveTo ? this.formatDateDDMMYYYY(effectiveTo) : null;
+    let dateRangeText = null;
+    if (from && to) {
+      dateRangeText = `From ${from} To ${to}`;
+    } else if (from) {
+      dateRangeText = `From ${from}`;
+    } else if (to) {
+      dateRangeText = `Till ${to}`;
+    }
 
     const html = template({
       css: cssContent,
       company: payload.company || {},
       customer: payload.customer || {},
-      dateRange: payload.dateRange || null,
+      dateRange: dateRangeText,
       openingRow,
       ledgerEntries,
-      emptyRows,
+      emptyRows: [],
       closingBalance: this.formatCurrency(closingBalance),
-      termsAndConditions: payload.termsAndConditions || [
-        { number: 1, text: 'All payments should be made within 30 days from the invoice date.' },
-        { number: 2, text: 'Overdue interest will be charged at 18% per annum.' },
-        { number: 3, text: 'Any discrepancies in the ledger should be reported within 7 days.' },
-        { number: 4, text: 'This is a system-generated report and does not require a signature.' },
-        { number: 5, text: 'Subject to Rajkot Jurisdiction.' }
-      ]
     });
 
-    const browser = await puppeteer.launch({ headless: true, args: ['--no-sandbox', '--disable-setuid-sandbox'] });
+    const browser = await puppeteer.launch({ 
+      headless: true, 
+      args: ['--no-sandbox', '--disable-setuid-sandbox'] 
+    });
     const page = await browser.newPage();
     await page.setContent(html, { waitUntil: 'domcontentloaded' });
+    
     const pdfBuffer = await page.pdf({
       format: 'A4',
       printBackground: true,
-      margin: { top: '10mm', right: '10mm', bottom: '10mm', left: '10mm' }
+      margin: { top: '15mm', right: '10mm', bottom: '15mm', left: '10mm' },
+      displayHeaderFooter: false
     });
+    
     await browser.close();
     return pdfBuffer;
   }

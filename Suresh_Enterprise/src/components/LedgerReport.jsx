@@ -15,8 +15,20 @@ const LedgerReport = () => {
   const [user, setUser] = useState(() => {
     try { return JSON.parse(localStorage.getItem("user") || "null"); } catch { return null; }
   });
+  const [fromDate, setFromDate] = useState("");
+  const [toDate, setToDate] = useState("");
 
   const isCustomerUser = user?.userType === "Customer User";
+
+  // Build full formatted bill number like in BillTable
+  const formatBillNoAdmin = (invoice) => {
+    const compIdRaw = (invoice.companyProfileId ?? invoice.company_id ?? invoice.CompanyProfileId ?? "");
+    const compId = String(compIdRaw).padStart(4, "0").slice(-4);
+    const gstFlag = String(invoice.gst ?? "").slice(0, 1);
+    const invNum = String(invoice.invoiceNumber ?? invoice.billNumber ?? "").padStart(6, "0").slice(-6);
+    const year = String(invoice.billYear ?? "").padStart(4, "0").slice(-4);
+    return compId + gstFlag + invNum + year;
+  };
 
   useEffect(() => {
     const fetchBase = async () => {
@@ -72,7 +84,7 @@ const LedgerReport = () => {
       .filter(inv => (inv.customerId || inv.customer_id) === custIdNum)
       .map(inv => ({
         date: new Date(inv.billDate || inv.createdAt || Date.now()),
-        billNumber: String(inv.invoiceNumber ?? inv.billNumber ?? ""),
+        billNumber: formatBillNoAdmin(inv) || String(inv.invoiceNumber ?? inv.billNumber ?? ""),
         credited: 0,
         debited: Number(inv.totalAssesValue || inv.total || 0),
         type: "invoice"
@@ -80,24 +92,35 @@ const LedgerReport = () => {
 
     const payRows = (payments || []).map(p => ({
       date: new Date(p.paymentDate || p.createdAt || Date.now()),
-      billNumber: p.referenceNo || p.notes || "Payment",
+      billNumber: (() => {
+        const base = p.referenceNo || p.notes || "Payment";
+        const mode = p.mode_payment || p.modeOfPayment || p.payment_mode || p.mode || p.paymentMode;
+        return mode ? `${base} (${mode})` : base;
+      })(),
       credited: Number(p.amount || 0),
       debited: 0,
       type: "payment"
     }));
 
-    const rows = [...invRows, ...payRows].sort((a, b) => a.date - b.date);
+    const start = fromDate ? new Date(`${fromDate}T00:00:00`) : null;
+    const end = toDate ? new Date(`${toDate}T23:59:59.999`) : null;
+
+    let rows = [...invRows, ...payRows];
+    if (start) rows = rows.filter(r => r.date >= start);
+    if (end) rows = rows.filter(r => r.date <= end);
+    rows.sort((a, b) => a.date - b.date);
 
     let running = 0;
     return rows.map((r, idx) => {
       running += r.debited - r.credited;
       return { ...r, sr: idx + 1, total: running };
     });
-  }, [invoices, payments, selectedCustomerId]);
+  }, [invoices, payments, selectedCustomerId, fromDate, toDate]);
 
   if (loading) return <Loader />;
 
   const closingTotal = ledgerRows.length ? ledgerRows[ledgerRows.length - 1].total : 0;
+  const openingTotal = 0;
 
   const handleExportPDF = async () => {
     try {
@@ -105,8 +128,8 @@ const LedgerReport = () => {
       const response = await downloadLedgerPDF({
         customerId: Number(selectedCustomerId),
         companyProfileId: undefined,
-        fromDate: undefined,
-        toDate: undefined,
+        fromDate: fromDate || undefined,
+        toDate: toDate || undefined,
       });
       const blob = response.data;
       const url = window.URL.createObjectURL(blob);
@@ -162,6 +185,17 @@ const LedgerReport = () => {
               </span>
               <span className="dropdown-caret">▼</span>
             </div>
+            {/* Date Range */}
+            <div className="filters-grid" style={{ marginTop: "0.75rem", gap: "0.75rem" }}>
+              <div>
+                <label className="form-label">From</label>
+                <input type="date" value={fromDate} onChange={(e) => setFromDate(e.target.value)} />
+              </div>
+              <div>
+                <label className="form-label">To</label>
+                <input type="date" value={toDate} onChange={(e) => setToDate(e.target.value)} />
+              </div>
+            </div>
       {/* Export Buttons */}
       <div className="filters-grid" style={{ marginTop: "0.75rem" }}>
         <button className="btn btn-primary" onClick={handleExportPDF}>Generate PDF</button>
@@ -198,6 +232,15 @@ const LedgerReport = () => {
       </div>
 
       <div className="bill-table-div" ref={ledgerRef}>
+        <div
+          className="ledger-summary"
+          style={{ display: "flex", justifyContent: "flex-end", alignItems: "center", marginBottom: "0.75rem" }}
+        >
+          <div>
+            <strong>Opening Balance:</strong>
+            <span style={{ marginLeft: "0.5rem" }}>₹{openingTotal.toFixed(2)}</span>
+          </div>
+        </div>
         <table className="bill-table">
           <thead>
             <tr>
@@ -223,12 +266,13 @@ const LedgerReport = () => {
               </tr>
             )}
           </tbody>
+          <tfoot>
+            <tr>
+              <td colSpan={4} style={{ textAlign: "right" }}><strong>Closing Balance:</strong></td>
+              <td>₹{closingTotal.toFixed(2)}</td>
+            </tr>
+          </tfoot>
         </table>
-        {/* Summary: Total of Total column (closing balance) */}
-        <div className="active-filters" style={{ marginTop: "0.75rem" }}>
-          <strong>Closing Balance:</strong>
-          <span style={{ marginLeft: "0.5rem" }}>₹{closingTotal.toFixed(2)}</span>
-        </div>
       </div>
     </div>
   );

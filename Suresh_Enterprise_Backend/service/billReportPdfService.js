@@ -103,8 +103,10 @@ class BillReportPDFService {
     const page = await browser.newPage();
     await page.setContent(html, { waitUntil: 'domcontentloaded' });
     const pdfBuffer = await page.pdf({
-      format: 'A4',
       printBackground: true,
+      landscape: true,
+      width: '11in',
+      height: '8.5in',
       margin: { top: '10mm', right: '10mm', bottom: '10mm', left: '10mm' }
     });
     await browser.close();

@@ -87,18 +87,6 @@
       <p>Grand Total: <span>₹ {{summary.grandTotal}}</span></p>
     </div>
 
-    <!-- Footer Section -->
-    <div class="footer-section">
-      <h4>Report Information:</h4>
-      <p><strong>1.</strong> This is a system-generated report and does not require a signature.</p>
-      <p><strong>2.</strong> All amounts are in Indian Rupees (₹).</p>
-      <p><strong>3.</strong> For any queries, please contact: {{#if company.email}}{{company.email}}{{else}}accounts@example.com{{/if}}</p>
-
-      <div class="footer-info">
-        <p><strong>Generated on:</strong> {{generatedOn}}</p>
-        <p><strong>Page:</strong> 1 of 1</p>
-      </div>
-    </div>
   </div>
 </body>
 </html>

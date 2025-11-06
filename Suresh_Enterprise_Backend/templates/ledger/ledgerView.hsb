@@ -4,44 +4,100 @@
     <meta charset="UTF-8">
     <style>
         {{{css}}}
+        
+        /* Critical styles for repeating header */
+        @media print {
+          thead { 
+            display: table-header-group;
+          }
+          tfoot { 
+            display: table-footer-group;
+          }
+          .page-header {
+            page-break-after: avoid;
+          }
+        }
+        
+        .page-header {
+          width: 100%;
+          margin-bottom: 0;
+        }
+        
+        .page-header h1 {
+          margin: 0;
+          padding: 0;
+          font-size: 28px;
+          font-weight: bold;
+          text-align: center;
+        }
+        
+        .page-header .company-info {
+          text-align: center;
+          font-size: 11px;
+          margin: 2px 0;
+        }
+        
+        .page-header .header-divider {
+          border-top: 2px solid #000;
+          border-bottom: 2px solid #000;
+          padding: 8px 0;
+          margin: 8px 0;
+          display: flex;
+          justify-content: space-between;
+        }
+        
+        .page-header .party-section {
+          width: 48%;
+        }
+        
+        .page-header .report-section {
+          width: 48%;
+          text-align: right;
+        }
+        
+        .page-header .report-section h2 {
+          margin: 0 0 4px 0;
+          font-size: 22px;
+          font-weight: bold;
+        }
+        
+        .ledger-table {
+          width: 100%;
+          border-collapse: collapse;
+        }
     </style>
 </head>
 <body>
   <div class="ledger-container">
-    <div class="ledger-header">
-      <h1>{{company.name}}</h1>
-      {{#if company.address}}
-      <p>{{company.address}}</p>
-      {{/if}}
-      {{#if company.gstin}}
-      <p><strong>GSTIN:</strong> {{company.gstin}}</p>
-      {{/if}}
-    </div>
-
-    <div class="customer-section">
-      <div class="customer-details">
-        <h3>Party Details:</h3>
-        <p><strong>Customer Name:</strong> {{customer.name}}</p>
-        {{#if customer.companyName}}
-        <p><strong>Company Name:</strong> {{customer.companyName}}</p>
-        {{/if}}
-        {{#if customer.address}}
-        <p><strong>Address:</strong> {{customer.address}}</p>
-        {{/if}}
-        {{#if customer.gstin}}
-        <p><strong>GSTIN:</strong> {{customer.gstin}}</p>
-        {{/if}}
-      </div>
-      <div class="report-title">
-        <h2>LEDGER REPORT</h2>
-        {{#if dateRange}}
-        <p style="font-size: 14px; margin-top: 10px;">{{dateRange}}</p>
-        {{/if}}
-      </div>
-    </div>
-
     <table class="ledger-table">
       <thead>
+        <tr>
+          <th colspan="6" class="page-header-cell" style="border: none; padding: 0;">
+            <div class="page-header">
+              <h1>{{company.name}}</h1>
+              <p class="company-info">{{#if company.address}}{{company.address}}{{else}}3rd Floor, Corporate Heights, Near KKV Circle, Kalawad Road, Rajkot, Gujarat - 360005{{/if}}</p>
+              <p class="company-info"><strong>GSTIN:</strong> {{#if company.gstin}}{{company.gstin}}{{else}}24JJJJJ1234F1Z5{{/if}}</p>
+              
+              <div class="header-divider">
+                <div class="party-section">
+                  <p style="margin: 0 0 4px 0; font-weight: bold;">Party Details:</p>
+                  <p style="margin: 2px 0; font-size: 11px;"><strong>Customer Name:</strong> {{customer.name}}</p>
+                  {{#if customer.companyName}}
+                  <p style="margin: 2px 0; font-size: 11px;"><strong>Company Name:</strong> {{customer.companyName}}</p>
+                  {{/if}}
+                  <p style="margin: 2px 0; font-size: 11px;"><strong>Address:</strong> {{#if customer.address}}{{customer.address}}{{else}}Rajkot ring road{{/if}}</p>
+                  <p style="margin: 2px 0; font-size: 11px;"><strong>GSTIN:</strong> {{#if customer.gstin}}{{customer.gstin}}{{else}}24AAAAA1234F1Z5{{/if}}</p>
+                </div>
+                <div class="report-section">
+                  <h2>LEDGER REPORT</h2>
+                  {{#if dateRange}}
+                  <p style="margin: 0; font-size: 11px;">{{dateRange}}</p>
+                  {{/if}}
+                </div>
+              </div>
+            </div>
+          </th>
+        </tr>
         <tr>
           <th>Sr. No.</th>
           <th>Date</th>
