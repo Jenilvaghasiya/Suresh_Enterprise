@@ -16,7 +16,7 @@
                 <h1>{{company.companyName}}</h1>
             </div>
             <div class="inv-no">
-                <p style="font-size: 18px; font-weight: bold;">INVOICE</p>
+                <p style="font-size: 18px; font-weight: bold;">INVOICE <span class="copy-badge">{{copyType}}</span></p>
                 <p>No: {{billNo}}</p>
                 <p>Date: {{billDate}}</p>
             </div>
@@ -140,10 +140,10 @@
             <div class="footer-area">
                 <div class="terms">
                     <h4>Terms & Conditions:</h4>
-                    <p>1. Goods once sold will not be taken back or exchanged</p>
-                    <p>2. Payment should be made within {{#if invoice.paymentTerms}}{{invoice.paymentTerms}}{{else}}15 days{{/if}} from invoice date</p>
-                    <p>3. Interest @ 18% p.a. will be charged on overdue payments</p>
-                    <p>4. Any dispute subject to {{#if company.jurisdiction}}{{company.jurisdiction}}{{else}}{{customer.stateName}}{{/if}} jurisdiction only</p>
+                    <p>goods once sold will not be taken back or exchanged</p>
+                    <p>payment within {{#if invoice.paymentTerms}}{{invoice.paymentTerms}}{{else}}15 days{{/if}} of invoice date</p>
+                    <p>18% p.a. interest on overdue amounts; e & o e</p>
+                    <p>all disputes subject to {{#if company.jurisdiction}}{{company.jurisdiction}}{{else}}{{customer.stateName}}{{/if}} jurisdiction</p>
                 </div>
                 <div class="auth-sign">
                     <p><strong>For {{company.companyName}}</strong></p>

@@ -5,18 +5,20 @@
 }
 body {
     font-family: Arial, sans-serif;
-    padding: 20px;
+    padding: 8px;
     background: #f0f0f0;
 }
+@page { size: A4; margin: 8mm; }
+@media print { body { padding: 0; background: #fff; } }
 .invoice-wrap {
-    max-width: 850px;
+    max-width: 190mm;
     margin: 0 auto;
     background: white;
     border-left: 8px solid #2c5f8d;
     box-shadow: 0 0 20px rgba(0,0,0,0.1);
 }
 .header-area {
-    padding: 30px 35px 25px 35px;
+    padding: 14px 18px 12px 18px;
     background: linear-gradient(to right, #f8f9fa 0%, white 100%);
     border-bottom: 3px solid #2c5f8d;
 }
@@ -26,18 +28,18 @@ body {
     align-items: start;
 }
 .company-details h1 {
-    font-size: 32px;
+    font-size: 24px;
     color: #2c5f8d;
-    margin-bottom: 8px;
+    margin-bottom: 4px;
     font-weight: bold;
 }
 .company-details .subtitle {
-    font-size: 13px;
+    font-size: 11px;
     color: #666;
-    margin-bottom: 12px;
+    margin-bottom: 6px;
 }
 .company-details .address {
-    font-size: 11px;
+    font-size: 10px;
     color: #555;
     line-height: 1.7;
 }
@@ -45,57 +47,57 @@ body {
     text-align: right;
     background: #2c5f8d;
     color: white;
-    padding: 15px 20px;
+    padding: 8px 12px;
     border-radius: 5px;
 }
 .invoice-info h2 {
-    font-size: 20px;
-    margin-bottom: 8px;
+    font-size: 14px;
+    margin-bottom: 4px;
     font-weight: normal;
     letter-spacing: 2px;
 }
 .invoice-info p {
-    font-size: 12px;
-    margin: 4px 0;
+    font-size: 11px;
+    margin: 2px 0;
 }
 .main-content {
-    padding: 30px 35px;
+    padding: 14px 18px;
 }
 .details-section {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 20px;
-    margin-bottom: 30px;
+    gap: 12px;
+    margin-bottom: 14px;
 }
 .detail-card {
     background: #f8f9fa;
-    padding: 18px;
+    padding: 12px;
     border-radius: 5px;
     border-left: 4px solid #2c5f8d;
 }
 .detail-card h3 {
-    font-size: 11px;
+    font-size: 10px;
     text-transform: uppercase;
     letter-spacing: 1px;
     color: #2c5f8d;
-    margin-bottom: 12px;
+    margin-bottom: 8px;
     font-weight: bold;
 }
 .detail-card p {
-    font-size: 12px;
-    margin: 6px 0;
+    font-size: 11px;
+    margin: 4px 0;
     color: #444;
 }
 .detail-card p strong {
     color: #2c5f8d;
 }
 .products-section {
-    margin: 25px 0;
+    margin: 12px 0;
 }
 .products-section h3 {
-    font-size: 14px;
+    font-size: 12px;
     color: #2c5f8d;
-    margin-bottom: 15px;
+    margin-bottom: 10px;
     text-transform: uppercase;
     letter-spacing: 1px;
 }
@@ -109,16 +111,16 @@ body {
     color: white;
 }
 .product-table th {
-    padding: 12px 10px;
+    padding: 8px 8px;
     text-align: left;
-    font-size: 11px;
+    font-size: 10px;
     font-weight: normal;
     text-transform: uppercase;
     letter-spacing: 0.5px;
 }
 .product-table td {
-    padding: 12px 10px;
-    font-size: 12px;
+    padding: 8px 8px;
+    font-size: 11px;
     border-bottom: 1px solid #e8e8e8;
     color: #444;
 }
@@ -136,33 +138,33 @@ body {
 }
 .summary-layout {
     display: grid;
-    grid-template-columns: 1.3fr 1fr;
-    gap: 25px;
-    margin-top: 30px;
+    grid-template-columns: 1.2fr 0.9fr;
+    gap: 12px;
+    margin-top: 12px;
 }
 .payment-info {
     background: #f8f9fa;
-    padding: 20px;
+    padding: 12px;
     border-radius: 5px;
     border-left: 4px solid #2c5f8d;
 }
 .payment-info h4 {
-    font-size: 13px;
+    font-size: 12px;
     color: #2c5f8d;
-    margin-bottom: 12px;
+    margin-bottom: 8px;
     text-transform: uppercase;
     letter-spacing: 0.5px;
 }
 .payment-info p {
-    font-size: 11px;
-    margin: 6px 0;
+    font-size: 10px;
+    margin: 4px 0;
     color: #555;
 }
 .payment-info .qr-note {
-    margin-top: 12px;
-    padding-top: 10px;
+    margin-top: 8px;
+    padding-top: 6px;
     border-top: 1px solid #ddd;
-    font-size: 10px;
+    font-size: 9px;
     color: #888;
 }
 .calculation-box {
@@ -173,8 +175,8 @@ body {
 .calc-row {
     display: flex;
     justify-content: space-between;
-    padding: 12px 18px;
-    font-size: 13px;
+    padding: 8px 12px;
+    font-size: 12px;
     border-bottom: 1px solid #e8e8e8;
 }
 .calc-row:last-child {
@@ -188,36 +190,36 @@ body {
     background: #2c5f8d;
     color: white;
     font-weight: bold;
-    font-size: 16px;
+    font-size: 14px;
 }
 .amount-words {
-    margin-top: 25px;
-    padding: 15px 20px;
+    margin-top: 10px;
+    padding: 10px 12px;
     background: #fffef5;
     border: 1px solid #e6e6e6;
     border-left: 4px solid #2c5f8d;
     border-radius: 5px;
-    font-size: 12px;
+    font-size: 11px;
 }
 .footer-section {
-    margin-top: 35px;
-    padding-top: 25px;
+    margin-top: 14px;
+    padding-top: 12px;
     border-top: 2px solid #e8e8e8;
     display: grid;
     grid-template-columns: 1.5fr 1fr;
-    gap: 30px;
+    gap: 12px;
 }
 .terms-section h4 {
-    font-size: 13px;
+    font-size: 12px;
     color: #2c5f8d;
-    margin-bottom: 12px;
+    margin-bottom: 6px;
     text-transform: uppercase;
     letter-spacing: 0.5px;
 }
 .terms-section p {
-    font-size: 11px;
-    margin: 6px 0;
-    padding-left: 18px;
+    font-size: 10px;
+    margin: 4px 0;
+    padding-left: 14px;
     position: relative;
     color: #555;
     line-height: 1.6;
@@ -228,38 +230,136 @@ body {
     left: 0;
     color: #2c5f8d;
     font-weight: bold;
-    font-size: 14px;
+    font-size: 12px;
 }
 .signature-section {
     text-align: center;
     background: #f8f9fa;
-    padding: 20px;
+    padding: 12px;
     border-radius: 5px;
 }
 .signature-section p {
-    font-size: 12px;
-    margin: 8px 0;
+    font-size: 11px;
+    margin: 4px 0;
     color: #444;
 }
 .sig-box {
-    height: 70px;
-    margin: 20px 25px 12px 25px;
+    height: 40px;
+    margin: 10px 16px 8px 16px;
     border-bottom: 2px solid #2c5f8d;
 }
 .signature-section .company-name {
     font-weight: bold;
     color: #2c5f8d;
-    margin-bottom: 5px;
+    margin-bottom: 4px;
 }
 .footer-bar {
     background: #2c5f8d;
     color: white;
     text-align: center;
-    padding: 12px;
+    padding: 10px;
     font-size: 10px;
-    margin-top: 30px;
+    margin-top: 12px;
 }
 .footer-bar a {
     color: white;
     text-decoration: none;
+}
+
+/* compact blue variant using invoice-document classes */
+body.compact-blue { padding: 4px; background: #fff; }
+@page { size: A4; margin: 5mm; }
+@media print {
+  body.compact-blue { padding: 0; }
+  .invoice-document { box-shadow: none; border: none; }
+}
+.invoice-document {
+  max-width: 200mm;
+  margin: 0 auto;
+  background: #fff;
+  border: 2px solid #2c5f8d;
+}
+.header-strip {
+  background: #2c5f8d;
+  color: #fff;
+  padding: 8px 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.company-title h1 { font-size: 18px; margin-bottom: 2px; }
+.company-title .tagline { font-size: 9px; }
+.invoice-type {
+  background: #fff;
+  color: #2c5f8d;
+  padding: 5px 10px;
+  border-radius: 3px;
+  font-weight: bold;
+  font-size: 11px;
+  letter-spacing: 1px;
+}
+.sub-header {
+  background: #f5f5f5;
+  padding: 5px 12px;
+  border-bottom: 1px solid #2c5f8d;
+  font-size: 8px;
+  text-align: center;
+}
+.content-wrapper { padding: 10px 12px; }
+.invoice-meta {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 8px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid #e0e0e0;
+  font-size: 9px;
+}
+.parties-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; }
+.party-card { background: #fafafa; padding: 8px; border: 1px solid #e0e0e0; font-size: 9px; }
+.party-card h3 { background: #2c5f8d; color: #fff; padding: 4px 6px; margin: -8px -8px 6px -8px; font-size: 9px; text-transform: uppercase; font-weight: normal; }
+.party-card p { margin: 2px 0; line-height: 1.3; }
+.items-heading { background: #2c5f8d; color: #fff; padding: 5px 8px; margin-bottom: 0; font-size: 10px; text-transform: uppercase; }
+.items-table { width: 100%; border: 1px solid #2c5f8d; border-top: none; border-collapse: collapse; font-size: 9px; }
+.items-table thead { background: #f0f0f0; }
+.items-table th { padding: 4px 6px; text-align: left; font-size: 9px; border: 1px solid #ddd; font-weight: bold; }
+.items-table td { padding: 4px 6px; border: 1px solid #ddd; }
+.items-table tbody tr:nth-child(odd) { background: #fafafa; }
+.txt-right { text-align: right; }
+.txt-center { text-align: center; }
+.summary-grid { display: grid; grid-template-columns: 1.3fr 1fr; gap: 10px; margin-top: 10px; }
+.bank-card { background: #fafafa; border: 1px solid #e0e0e0; padding: 8px; font-size: 8px; }
+.bank-card h4 { background: #2c5f8d; color: #fff; padding: 4px 6px; margin: -8px -8px 6px -8px; font-size: 9px; text-transform: uppercase; }
+.bank-card p { margin: 2px 0; line-height: 1.4; }
+.totals-card { border: 1px solid #2c5f8d; }
+.total-item { display: flex; justify-content: space-between; padding: 5px 8px; font-size: 10px; border-bottom: 1px solid #e0e0e0; }
+.total-item:last-child { border-bottom: none; }
+.total-item.subtotal { background: #f5f5f5; font-weight: 600; }
+.total-item.final { background: #2c5f8d; color: #fff; font-weight: bold; font-size: 12px; }
+.words-strip { margin-top: 8px; background: #fffef0; border: 1px solid #e0e0e0; border-left: 3px solid #2c5f8d; padding: 6px 8px; font-size: 9px; }
+.bottom-area { margin-top: 10px; padding-top: 8px; border-top: 2px solid #2c5f8d; display: grid; grid-template-columns: 1.5fr 1fr; gap: 10px; }
+.terms-block h4 { font-size: 10px; margin-bottom: 4px; text-transform: uppercase; }
+.terms-block ul { list-style: none; padding: 0; }
+.terms-block li { font-size: 8px; margin: 2px 0; padding-left: 12px; position: relative; line-height: 1.4; }
+.terms-block li:before { content: "▸"; position: absolute; left: 0; font-weight: bold; }
+.sign-block { background: #fafafa; border: 1px solid #e0e0e0; padding: 8px; text-align: center; }
+.sign-block .company { font-size: 10px; font-weight: bold; margin-bottom: 2px; }
+.sign-space { height: 28px; margin: 6px 12px; border-bottom: 2px solid #2c5f8d; }
+.sign-block .signatory { font-size: 9px; font-weight: bold; }
+.sign-block .stamp-text { font-size: 7px; color: #666; margin-top: 4px; }
+.footer-black { background: #2c5f8d; color: #fff; text-align: center; padding: 6px; font-size: 8px; margin-top: 0; }
+.footer-black p { margin: 1px 0; }
+
+/* copy type badge */
+.copy-badge {
+  border: 1px solid #2c5f8d;
+  color: #2c5f8d;
+  background: #fff;
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: 9px;
+  font-weight: bold;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  display: inline-block;
+  margin-left: 8px;
 }
