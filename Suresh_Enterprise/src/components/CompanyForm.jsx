@@ -8,10 +8,10 @@ import {
   safeApiCall,
 } from "../services/api";
 import { toast } from "../utils/toast";
-import view1Img from "../assets/bill-previews/view1.png";
-import view2Img from "../assets/bill-previews/view2.png";
-import view3Img from "../assets/bill-previews/view3.png";
-import view4Img from "../assets/bill-previews/view4.png";
+import view1Img from "../assets/bill-previews/view4.png";
+import view2Img from "../assets/bill-previews/view3.png";
+import view3Img from "../assets/bill-previews/view2.png";
+import view4Img from "../assets/bill-previews/view1.png";
 
 const countryData = {
   USA: {
