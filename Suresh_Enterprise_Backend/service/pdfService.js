@@ -143,19 +143,48 @@ class PDFService {
 
     async generateBillPDF(invoice, copyType = "Original") {
         try {
+            // Resolve template and CSS based on selected company invoice template
+            const invoicePlain = invoice?.get ? invoice.get({ plain: true }) : (invoice || {});
+            const company = invoicePlain.CompanyProfile || {};
+            const tplKeyRaw = (company.invoiceTemplate || 'view1').toString().toLowerCase();
+            const tplKey = ['view1','view2','view3'].includes(tplKeyRaw) ? tplKeyRaw : 'view1';
+
+            const templateFile = tplKey === 'view1' ? 'billView1.hsb'
+                : tplKey === 'view2' ? 'billView2.hsb'
+                : tplKey === 'view3' ? 'billView3.hsb'
+                : 'billView1.hsb';
+            const cssFile = tplKey === 'view1' ? 'billView1.css'
+                : tplKey === 'view2' ? 'billView2.css'
+                : tplKey === 'view3' ? 'billView3.css'
+                : 'billView1.css';
+
+            let templatePath = path.join(__dirname, '../templates/bill', templateFile);
+            let cssPath = path.join(__dirname, '../templates/bill', cssFile);
+
+            // Fallback to base template if specific files are missing
+            try {
+                await fs.access(templatePath);
+            } catch {
+                templatePath = path.join(__dirname, '../templates/bill', 'billView.hsb');
+            }
+            try {
+                await fs.access(cssPath);
+            } catch {
+                cssPath = path.join(__dirname, '../templates/bill', 'billView.css');
+            }
+
             // Read template and CSS
             const [templateContent, cssContent] = await Promise.all([
-                fs.readFile(this.templatePath, 'utf-8'),
-                fs.readFile(this.cssPath, 'utf-8')
+                fs.readFile(templatePath, 'utf-8'),
+                fs.readFile(cssPath, 'utf-8')
             ]);
 
             // Compile template
             const template = handlebars.compile(templateContent);
 
             // Prepare data
-            const invoicePlain = invoice?.get ? invoice.get({ plain: true }) : (invoice || {});
             const customer = invoicePlain.Customer || {};
-            const company = invoicePlain.CompanyProfile || {};
+            // company already resolved above
             const totals = this.calculateTotals(invoicePlain);
 
             // Prepare items with serial numbers

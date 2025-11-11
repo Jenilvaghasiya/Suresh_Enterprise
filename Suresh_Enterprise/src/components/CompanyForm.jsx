@@ -8,6 +8,10 @@ import {
   safeApiCall,
 } from "../services/api";
 import { toast } from "../utils/toast";
+import view1Img from "../assets/bill-previews/view1.png";
+import view2Img from "../assets/bill-previews/view2.png";
+import view3Img from "../assets/bill-previews/view3.png";
+import view4Img from "../assets/bill-previews/view4.png";
 
 const countryData = {
   USA: {
@@ -36,12 +40,35 @@ const CompanyForm = ({ editCompany, onDataUpdate }) => {
     country: "",
     state: "",
     city: "",
-    gstMasterId: 1, // default GST Master ID
+    gstMasterId: 1,
     isActive: true,
+    // Bill view URLs
+    billView1: "",
+    billView2: "",
+    billView3: "",
+    billView4: "",
   });
 
   const [logoFile, setLogoFile] = useState(null);
   const [logoPreview, setLogoPreview] = useState(null);
+  
+  // Static invoice template images
+  const templateImgs = {
+    view1: view1Img,
+    view2: view2Img,
+    view3: view3Img,
+    view4: view4Img,
+  };
+  const [selectedView, setSelectedView] = useState("view1");
+  const [previewOpen, setPreviewOpen] = useState(false);
+  const [previewSrc, setPreviewSrc] = useState(null);
+  const [zoom, setZoom] = useState(1);
+  const zoomStep = 0.2;
+  const minZoom = 0.4;
+  const maxZoom = 3;
+  const handleZoomIn = () => setZoom((z) => Math.min(maxZoom, +(z + zoomStep).toFixed(2)));
+  const handleZoomOut = () => setZoom((z) => Math.max(minZoom, +(z - zoomStep).toFixed(2)));
+  const handleZoomReset = () => setZoom(1);
 
   const [states, setStates] = useState([]);
   const [cities, setCities] = useState([]);
@@ -91,6 +118,10 @@ const CompanyForm = ({ editCompany, onDataUpdate }) => {
         city: editCompany.city || "",
         gstMasterId: editCompany.gstMasterId || 1,
         isActive: editCompany.isActive ?? true,
+        billView1: editCompany.billView1 || "",
+        billView2: editCompany.billView2 || "",
+        billView3: editCompany.billView3 || "",
+        billView4: editCompany.billView4 || "",
       });
 
       const newStates = Object.keys(
@@ -108,9 +139,15 @@ const CompanyForm = ({ editCompany, onDataUpdate }) => {
         setLogoPreview(null);
       }
       setLogoFile(null);
+
+      // initialize selected invoice template from edit data
+      setSelectedView((editCompany.invoiceTemplate || "view1").toLowerCase());
+
     } else {
       setLogoPreview(null);
       setLogoFile(null);
+      // reset to default template on create
+      setSelectedView("view1");
     }
     setErrors({});
   }, [editCompany]);
@@ -154,7 +191,6 @@ const CompanyForm = ({ editCompany, onDataUpdate }) => {
   const handleLogoChange = (e) => {
     const file = e.target.files[0];
     if (file) {
-      // Validate file type
       const allowedTypes = [
         "image/jpeg",
         "image/jpg",
@@ -167,7 +203,6 @@ const CompanyForm = ({ editCompany, onDataUpdate }) => {
         return;
       }
 
-      // Validate file size (5MB)
       if (file.size > 5 * 1024 * 1024) {
         toast.error("File size must be less than 5MB");
         return;
@@ -186,7 +221,6 @@ const CompanyForm = ({ editCompany, onDataUpdate }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Customer Users cannot create a new company (only edit their own)
     if (!editCompany && currentUser?.userType === "Customer User") {
       toast.error("Only admin can add a company");
       return;
@@ -194,19 +228,16 @@ const CompanyForm = ({ editCompany, onDataUpdate }) => {
 
     const newErrors = {};
 
-    // Company Name validation
     if (!formData.companyName.trim()) {
       newErrors.companyName = "Company name is required";
     } else if (formData.companyName.trim().length < 3) {
       newErrors.companyName = "Company name must be at least 3 characters";
     }
 
-    // Company Address validation
     if (!formData.companyAddress.trim()) {
       newErrors.companyAddress = "Company address is required";
     }
 
-    // GST Number validation (15 characters alphanumeric)
     if (formData.companyGstNumber.trim()) {
       const gstRegex =
         /^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$/;
@@ -216,19 +247,16 @@ const CompanyForm = ({ editCompany, onDataUpdate }) => {
       }
     }
 
-    // Account Number validation (numeric, 9-18 digits)
     if (!formData.companyAccountNumber.trim()) {
       newErrors.companyAccountNumber = "Account number is required";
     } else if (!/^\d{9,18}$/.test(formData.companyAccountNumber.trim())) {
       newErrors.companyAccountNumber = "Account number must be 9-18 digits";
     }
 
-    // Account Holder Name validation
     if (!formData.accountHolderName.trim()) {
       newErrors.accountHolderName = "Account holder name is required";
     }
 
-    // IFSC Code validation (11 characters: 4 letters + 7 digits/letters)
     if (!formData.ifscCode.trim()) {
       newErrors.ifscCode = "IFSC code is required";
     } else if (
@@ -237,12 +265,10 @@ const CompanyForm = ({ editCompany, onDataUpdate }) => {
       newErrors.ifscCode = "Invalid IFSC code format (e.g., SBIN0001234)";
     }
 
-    // Branch Name validation
     if (!formData.branchName.trim()) {
       newErrors.branchName = "Branch name is required";
     }
 
-    // Location validation
     if (!formData.country) {
       newErrors.country = "Country is required";
     }
@@ -262,7 +288,6 @@ const CompanyForm = ({ editCompany, onDataUpdate }) => {
 
     setLoading(true);
 
-    // Create FormData for file upload
     const formDataToSend = new FormData();
     formDataToSend.append("companyName", formData.companyName.trim());
     formDataToSend.append("companyAddress", formData.companyAddress.trim());
@@ -282,10 +307,12 @@ const CompanyForm = ({ editCompany, onDataUpdate }) => {
     formDataToSend.append("city", formData.city);
     formDataToSend.append("gstMasterId", formData.gstMasterId);
     formDataToSend.append("isActive", formData.isActive);
+    formDataToSend.append("invoiceTemplate", selectedView);
 
     if (logoFile) {
       formDataToSend.append("companyLogo", logoFile);
     }
+
 
     if (editCompany) {
       const [data, error] = await safeApiCall(
@@ -728,6 +755,67 @@ const CompanyForm = ({ editCompany, onDataUpdate }) => {
           </label>
         </fieldset>
 
+        <fieldset className="form-section">
+          <legend>Bill Views</legend>
+          <div className="bill-views-grid">
+            {["view1", "view2", "view3", "view4"].map((viewKey, index) => (
+              <label key={viewKey} className="bill-view-item">
+                <div style={{display:"flex", alignItems:"center", justifyContent:"space-between", gap:8}}>
+                  <span>View {index + 1}</span>
+                  <label style={{display:"flex", alignItems:"center", gap:6}}>
+                    <input
+                      type="radio"
+                      name="invoiceView"
+                      checked={selectedView === viewKey}
+                      onChange={() => setSelectedView(viewKey)}
+                    />
+                    <span style={{fontSize:12,color:"#374151"}}>Select</span>
+                  </label>
+                </div>
+                <div style={{ marginTop: "10px" }}>
+                  <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+                    <img
+                      src={templateImgs[viewKey]}
+                      alt={`Bill View ${index + 1}`}
+                      className="bill-view-thumb"
+                      onClick={() => { setPreviewSrc(templateImgs[viewKey]); setZoom(1); setPreviewOpen(true); }}
+                    />
+                    <div style={{display:"flex", gap:8}}>
+                      <button
+                        type="button"
+                        onClick={() => { setPreviewSrc(templateImgs[viewKey]); setZoom(1); setPreviewOpen(true); }}
+                        className="preview-view-btn"
+                      >
+                        Preview
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </label>
+            ))}
+          </div>
+        </fieldset>
+
+        {previewOpen && (
+          <div className="modal-backdrop" onClick={() => setPreviewOpen(false)}>
+            <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+              <div className="zoom-toolbar">
+                <button type="button" className="zoom-btn" onClick={handleZoomOut}>-</button>
+                <span className="zoom-level">{Math.round(zoom * 100)}%</span>
+                <button type="button" className="zoom-btn" onClick={handleZoomIn}>+</button>
+                <button type="button" className="zoom-btn" onClick={handleZoomReset}>Reset</button>
+              </div>
+              <div className="modal-image-container">
+                <div style={{transform:`scale(${zoom})`, transformOrigin:"center center"}}>
+                  <img src={previewSrc} alt="Invoice Preview" className="modal-image" />
+                </div>
+              </div>
+              <div style={{display:"flex", justifyContent:"flex-end", marginTop:12}}>
+                <button type="button" className="form-button" onClick={() => setPreviewOpen(false)}>Close</button>
+              </div>
+            </div>
+          </div>
+        )}
         <div className="form-buttons">
           <button type="submit" className="form-button" disabled={loading}>
             {loading

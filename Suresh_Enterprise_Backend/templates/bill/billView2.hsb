@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <style>
+        {{{css}}}
+    </style>
+    <title>Tax Invoice</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+</head>
+<body>
+    <div class="invoice-wrap">
+        <div class="header-area">
+            <div class="company-row">
+                <div class="company-details">
+                    <h1>{{company.companyName}}</h1>
+                    {{#if company.tagline}}
+                    <p class="subtitle">{{company.tagline}}</p>
+                    {{/if}}
+                    <p class="address">
+                        {{company.companyAddress}}<br>
+                        {{#if company.companyPhone}}Phone: {{company.companyPhone}}{{/if}}{{#if company.companyAltPhone}} | Alt: {{company.companyAltPhone}}{{/if}}<br>
+                        {{#if company.companyEmail}}Email: {{company.companyEmail}}{{/if}}<br>
+                        {{#if company.companyGstNumber}}GSTIN: {{company.companyGstNumber}}{{/if}}{{#if company.companyPanNumber}} | PAN: {{company.companyPanNumber}}{{/if}}
+                    </p>
+                </div>
+                <div class="invoice-info">
+                    <h2>INVOICE</h2>
+                    <p><strong>No:</strong> {{billNo}}</p>
+                    <p><strong>Date:</strong> {{billDate}}</p>
+                    {{#if billTime}}
+                    <p><strong>Time:</strong> {{billTime}}</p>
+                    {{/if}}
+                </div>
+            </div>
+        </div>
+
+        <div class="main-content">
+            <div class="details-section">
+                <div class="detail-card">
+                    <h3>Bill To</h3>
+                    <p><strong>{{customer.customerName}}</strong></p>
+                    <p>{{customer.billingAddress}}</p>
+                    {{#if customer.city}}<p>{{customer.city}} {{#if customer.pincode}}- {{customer.pincode}}{{/if}}, {{customer.stateName}}</p>{{/if}}
+                    {{#if customer.gstNumber}}<p><strong>GSTIN:</strong> {{customer.gstNumber}}</p>{{/if}}
+                    {{#if customer.phone}}<p><strong>Phone:</strong> {{customer.phone}}</p>{{/if}}
+                </div>
+                <div class="detail-card">
+                    <h3>Invoice Details</h3>
+                    {{#if invoice.poNumber}}<p><strong>PO Number:</strong> {{invoice.poNumber}}</p>{{/if}}
+                    {{#if invoice.poDate}}<p><strong>PO Date:</strong> {{invoice.poDate}}</p>{{/if}}
+                    {{#if dueDate}}<p><strong>Due Date:</strong> {{dueDate}}</p>{{/if}}
+                    {{#if invoice.paymentTerms}}<p><strong>Payment Terms:</strong> {{invoice.paymentTerms}}</p>{{/if}}
+                    <p><strong>Place of Supply:</strong> {{customer.stateName}}</p>
+                </div>
+                <div class="detail-card">
+                    <h3>Delivery Info</h3>
+                    {{#if invoice.deliveryMode}}<p><strong>Mode:</strong> {{invoice.deliveryMode}}</p>{{/if}}
+                    {{#if invoice.deliveryTime}}<p><strong>Time:</strong> {{invoice.deliveryTime}}</p>{{/if}}
+                    {{#if invoice.deliveryPerson}}<p><strong>Person:</strong> {{invoice.deliveryPerson}}</p>{{/if}}
+                    {{#if invoice.deliveryContact}}<p><strong>Contact:</strong> {{invoice.deliveryContact}}</p>{{/if}}
+                    {{#if invoice.deliveryNotes}}<p><strong>Notes:</strong> {{invoice.deliveryNotes}}</p>{{/if}}
+                </div>
+            </div>
+
+            <div class="products-section">
+                <h3>Product Details</h3>
+                <table class="product-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 5%;">Sr</th>
+                            <th style="width: 35%;">Product Description</th>
+                            <th style="width: 11%;">HSN Code</th>
+                            <th style="width: 9%;">Qty</th>
+                            <th style="width: 8%;">Unit</th>
+                            <th style="width: 10%;">MRP</th>
+                            <th style="width: 10%;">Rate</th>
+                            <th style="width: 12%;" class="align-right">Amount</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {{#each items}}
+                        <tr>
+                            <td class="align-center">{{this.srNo}}</td>
+                            <td>{{this.productName}}</td>
+                            <td class="align-center">{{this.hsnCode}}</td>
+                            <td class="align-center">{{this.quantity}}</td>
+                            <td class="align-center">{{this.uom}}</td>
+                            <td class="align-right">₹ {{#if this.mrp}}{{this.mrp}}{{else}}-{{/if}}</td>
+                            <td class="align-right">₹ {{this.rate}}</td>
+                            <td class="align-right">₹ {{#if this.total}}{{this.total}}{{else}}{{this.amount}}{{/if}}</td>
+                        </tr>
+                        {{/each}}
+                        {{#each emptyRows}}
+                        <tr>
+                            <td class="align-center">&nbsp;</td>
+                            <td></td>
+                            <td class="align-center"></td>
+                            <td class="align-center"></td>
+                            <td class="align-center"></td>
+                            <td class="align-right"></td>
+                            <td class="align-right"></td>
+                            <td class="align-right"></td>
+                        </tr>
+                        {{/each}}
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="summary-layout">
+                <div class="payment-info">
+                    <h4>Bank Account Details</h4>
+                    <p><strong>Bank Name:</strong> {{company.bankName}}</p>
+                    <p><strong>Branch:</strong> {{company.branchName}}</p>
+                    <p><strong>Account Holder:</strong> {{company.companyName}}</p>
+                    <p><strong>Account Number:</strong> {{company.companyAccountNumber}}</p>
+                    <p><strong>IFSC Code:</strong> {{company.ifscCode}}</p>
+                    {{#if company.accountType}}<p><strong>Account Type:</strong> {{company.accountType}}</p>{{/if}}
+                    {{#if company.upiId}}<p><strong>UPI ID:</strong> {{company.upiId}}</p>{{/if}}
+                    <p class="qr-note">Scan QR code for quick payment (UPI enabled)</p>
+                </div>
+                <div class="calculation-box">
+                    <div class="calc-row subtotal">
+                        <span>Sub Total:</span>
+                        <span>₹ {{totals.totalAssesValue}}</span>
+                    </div>
+                    {{#if isGst}}
+                        {{#if totals.hasIgst}}
+                            <div class="calc-row">
+                                <span>IGST ({{totals.igstRate}}%):</span>
+                                <span>₹ {{totals.igstAmount}}</span>
+                            </div>
+                        {{else}}
+                            <div class="calc-row">
+                                <span>CGST ({{totals.cgstRate}}%):</span>
+                                <span>₹ {{totals.cgstAmount}}</span>
+                            </div>
+                            <div class="calc-row">
+                                <span>SGST ({{totals.sgstRate}}%):</span>
+                                <span>₹ {{totals.sgstAmount}}</span>
+                            </div>
+                        {{/if}}
+                    {{/if}}
+                    <div class="calc-row">
+                        <span>Transport Charges:</span>
+                        <span>₹ {{#if totals.freightCharges}}{{totals.freightCharges}}{{else}}0.00{{/if}}</span>
+                    </div>
+                    <div class="calc-row">
+                        <span>Round Off:</span>
+                        <span>{{#if totals.roundOff}}₹ {{totals.roundOff}}{{else}}₹ 0.00{{/if}}</span>
+                    </div>
+                    <div class="calc-row grand-total">
+                        <span>GRAND TOTAL:</span>
+                        <span>₹ {{totals.billValue}}</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="amount-words">
+                <strong>Amount in Words:</strong> {{amountInWords}}
+            </div>
+
+            <div class="footer-section">
+                <div class="terms-section">
+                    <h4>Terms & Conditions</h4>
+                    <p>Payment must be made within {{#if invoice.paymentTerms}}{{invoice.paymentTerms}}{{else}}14 Days{{/if}} from invoice date</p>
+                    <p>Goods once sold will not be taken back or exchanged</p>
+                    <p>Interest @ 18% per annum on delayed payments</p>
+                    <p>Check goods before accepting delivery</p>
+                    <p>Subject to {{#if company.jurisdiction}}{{company.jurisdiction}}{{else}}{{customer.stateName}}{{/if}} jurisdiction for any disputes</p>
+                    <p>Prices are inclusive of all taxes as mentioned</p>
+                </div>
+                <div class="signature-section">
+                    <p class="company-name">For {{company.companyName}}</p>
+                    <div class="sig-box"></div>
+                    <p><strong>Authorized Signatory</strong></p>
+                    <p style="font-size: 10px; color: #888; margin-top: 10px;">Computer Generated Invoice</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer-bar">
+            Thank you for your business! {{#if company.website}}| Visit us: <a href="#">{{company.website}}</a>{{/if}} {{#if company.companyPhone}}| Call: {{company.companyPhone}}{{/if}}
+        </div>
+    </div>
+</body>
+</html>

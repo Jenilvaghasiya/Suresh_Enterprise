@@ -21,7 +21,7 @@ const LedgerReport = () => {
   const isCustomerUser = user?.userType === "Customer User";
 
   // Build full formatted bill number like in BillTable
-  const formatBillNoAdmin = (invoice) => {
+  const formatBillNoAdmin = (invoice) => {  
     const compIdRaw = (invoice.companyProfileId ?? invoice.company_id ?? invoice.CompanyProfileId ?? "");
     const compId = String(compIdRaw).padStart(4, "0").slice(-4);
     const gstFlag = String(invoice.gst ?? "").slice(0, 1);

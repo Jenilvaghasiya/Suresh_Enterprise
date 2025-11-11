@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <style>
+        {{{css}}}
+    </style>
+    <title>Tax Invoice</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+</head>
+<body>
+    <div class="invoice-wrap">
+        <div class="header-bar">
+            <div>
+                <h1>{{company.companyName}}</h1>
+            </div>
+            <div class="inv-no">
+                <p style="font-size: 18px; font-weight: bold;">INVOICE</p>
+                <p>No: {{billNo}}</p>
+                <p>Date: {{billDate}}</p>
+            </div>
+        </div>
+
+        <div class="company-strip">
+            {{company.companyAddress}} {{#if company.companyPhone}}| Ph: {{company.companyPhone}}{{/if}} {{#if company.companyGstNumber}}| GSTIN: {{company.companyGstNumber}}{{/if}}
+        </div>
+
+        <div class="main-body">
+            <div class="two-col">
+                <div class="col-box">
+                    <h3>BILL TO</h3>
+                    <p><strong>M/s. {{customer.customerName}}</strong></p>
+                    <p>{{customer.billingAddress}}</p>
+                    {{#if customer.city}}<p>{{customer.city}} {{#if customer.pincode}}- {{customer.pincode}}{{/if}}</p>{{/if}}
+                    {{#if customer.stateName}}<p>{{customer.stateName}}, India</p>{{/if}}
+                    {{#if customer.gstNumber}}<p><strong>GSTIN:</strong> {{customer.gstNumber}}</p>{{/if}}
+                    {{#if customer.contact}}<p><strong>Contact:</strong> {{customer.contact}}</p>{{/if}}
+                </div>
+                <div class="col-box">
+                    <h3>SHIPPING TO</h3>
+                    <p><strong>{{#if invoice.shippingName}}{{invoice.shippingName}}{{else}}{{customer.customerName}}{{/if}}</strong></p>
+                    <p>{{#if invoice.deliveryAt}}{{invoice.deliveryAt}}{{else}}{{customer.billingAddress}}{{/if}}</p>
+                    {{#if invoice.shippingCity}}<p>{{invoice.shippingCity}} {{#if invoice.shippingPincode}}- {{invoice.shippingPincode}}{{/if}}</p>{{/if}}
+                    {{#if invoice.shippingState}}<p>{{invoice.shippingState}}, India</p>{{/if}}
+                    {{#if invoice.transport}}<p><strong>Transport:</strong> {{invoice.transport}}</p>{{/if}}
+                    {{#if invoice.lrNumber}}<p><strong>LR No:</strong> {{invoice.lrNumber}}</p>{{/if}}
+                </div>
+            </div>
+
+            <div class="items-area">
+                <table>
+                    <thead>
+                        <tr>
+                            <th style="width: 5%;">No</th>
+                            <th style="width: 38%;">Item Description</th>
+                            <th style="width: 11%;">HSN</th>
+                            <th style="width: 9%;">Qty</th>
+                            <th style="width: 9%;">Unit</th>
+                            <th style="width: 11%;">Rate</th>
+                            <th style="width: 8%;">Tax%</th>
+                            <th style="width: 13%;" class="right">Amount</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {{#each items}}
+                        <tr>
+                            <td class="center">{{this.srNo}}</td>
+                            <td>{{this.productName}}</td>
+                            <td class="center">{{this.hsnCode}}</td>
+                            <td class="center">{{this.quantity}}</td>
+                            <td class="center">{{this.uom}}</td>
+                            <td class="right">₹ {{this.rate}}</td>
+                            <td class="center">{{#if this.gstRate}}{{this.gstRate}}{{else}}{{this.taxRate}}{{/if}}%</td>
+                            <td class="right">₹ {{#if this.total}}{{this.total}}{{else}}{{this.amount}}{{/if}}</td>
+                        </tr>
+                        {{/each}}
+                        {{#each emptyRows}}
+                        <tr>
+                            <td class="center">&nbsp;</td>
+                            <td></td>
+                            <td class="center"></td>
+                            <td class="center"></td>
+                            <td class="center"></td>
+                            <td class="right"></td>
+                            <td class="center"></td>
+                            <td class="right"></td>
+                        </tr>
+                        {{/each}}
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="calc-section">
+                <div class="notes-area">
+                    <h4>Bank Details:</h4>
+                    <p><strong>Bank:</strong> {{company.bankName}}</p>
+                    <p><strong>Branch:</strong> {{company.branchName}}</p>
+                    <p><strong>A/c No:</strong> {{company.companyAccountNumber}}</p>
+                    <p><strong>IFSC:</strong> {{company.ifscCode}}</p>
+                    {{#if company.accountType}}<p><strong>Type:</strong> {{company.accountType}}</p>{{/if}}
+                </div>
+                <div class="calc-box">
+                    <div class="calc-line">
+                        <span>Taxable Value:</span>
+                        <span>₹ {{totals.totalAssesValue}}</span>
+                    </div>
+                    {{#if isGst}}
+                        {{#if totals.hasIgst}}
+                            <div class="calc-line">
+                                <span>IGST @ {{totals.igstRate}}%:</span>
+                                <span>₹ {{totals.igstAmount}}</span>
+                            </div>
+                        {{else}}
+                            <div class="calc-line">
+                                <span>CGST @ {{totals.cgstRate}}%:</span>
+                                <span>₹ {{totals.cgstAmount}}</span>
+                            </div>
+                            <div class="calc-line">
+                                <span>SGST @ {{totals.sgstRate}}%:</span>
+                                <span>₹ {{totals.sgstAmount}}</span>
+                            </div>
+                        {{/if}}
+                    {{/if}}
+                    <div class="calc-line">
+                        <span>Round Off:</span>
+                        <span>₹ {{#if totals.roundOff}}{{totals.roundOff}}{{else}}0.00{{/if}}</span>
+                    </div>
+                    <div class="calc-line total">
+                        <span>NET TOTAL:</span>
+                        <span>₹ {{totals.billValue}}</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="words-bar">
+                <strong>In Words:</strong> {{amountInWords}}
+            </div>
+
+            <div class="footer-area">
+                <div class="terms">
+                    <h4>Terms & Conditions:</h4>
+                    <p>1. Goods once sold will not be taken back or exchanged</p>
+                    <p>2. Payment should be made within {{#if invoice.paymentTerms}}{{invoice.paymentTerms}}{{else}}15 days{{/if}} from invoice date</p>
+                    <p>3. Interest @ 18% p.a. will be charged on overdue payments</p>
+                    <p>4. Any dispute subject to {{#if company.jurisdiction}}{{company.jurisdiction}}{{else}}{{customer.stateName}}{{/if}} jurisdiction only</p>
+                </div>
+                <div class="auth-sign">
+                    <p><strong>For {{company.companyName}}</strong></p>
+                    <div class="sign-line">
+                        <p>Authorized Signatory</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

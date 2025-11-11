@@ -7,7 +7,7 @@ const path = require("path");
 
 exports.createCompanyProfile = async (req, res, next) => {
     try {
-        const { companyName, companyAddress, companyGstNumber, companyAccountNumber, accountHolderName, ifscCode, branchName, city, state, country, gstMasterId, isActive } = req.body;
+        const { companyName, companyAddress, companyGstNumber, companyAccountNumber, accountHolderName, ifscCode, branchName, city, state, country, gstMasterId, isActive, invoiceTemplate } = req.body;
         const companyLogo = req.file ? `/uploads/company-logos/${req.file.filename}` : null;
 
         if (!companyName) {
@@ -109,6 +109,7 @@ exports.createCompanyProfile = async (req, res, next) => {
                 country,
                 gstMasterId: finalGstMasterId,
                 companyLogo,
+                invoiceTemplate: invoiceTemplate || undefined,
                 isActive: isActive ?? true
             }, { transaction: t });
 
@@ -182,7 +183,7 @@ exports.getCompanyProfileById = async (req, res, next) => {
 
 exports.updateCompanyProfileById = async (req, res, next) => {
     try {
-        const { companyName, companyAddress, companyGstNumber, companyAccountNumber, accountHolderName, ifscCode, branchName, city, state, country, gstMasterId, isActive } = req.body;
+        const { companyName, companyAddress, companyGstNumber, companyAccountNumber, accountHolderName, ifscCode, branchName, city, state, country, gstMasterId, isActive, invoiceTemplate } = req.body;
         const companyProfile = await CompanyProfiles.findByPk(req.params.id);
         const newCompanyLogo = req.file ? `/uploads/company-logos/${req.file.filename}` : null;
 
@@ -260,6 +261,7 @@ exports.updateCompanyProfileById = async (req, res, next) => {
             country: country ?? companyProfile.country,
             gstMasterId: finalGstMasterId,
             companyLogo: newCompanyLogo ?? companyProfile.companyLogo,
+            invoiceTemplate: invoiceTemplate ?? companyProfile.invoiceTemplate,
             isActive: isActive ?? companyProfile.isActive
         });
 

@@ -296,7 +296,7 @@ exports.getAllInvoices = async (req, res, next) => {
                 },
                 {
                     model: CompanyProfiles,
-                    attributes: ["id", "companyName", "companyGstNumber", "companyAddress", "branchName", "companyAccountNumber", "ifscCode"]
+                    attributes: ["id", "companyName", "companyGstNumber", "companyAddress", "branchName", "companyAccountNumber", "ifscCode", "invoiceTemplate"]
                 },
                 {
                     model: InvoiceItems,
@@ -658,12 +658,12 @@ exports.generateInvoicePDF = async (req, res, next) => {
             let company = null;
             if (compIdPadded) {
                 company = await CompanyProfiles.findByPk(compIdPadded, {
-                    attributes: ["id", "companyName", "companyGstNumber", "companyAddress", "branchName", "companyAccountNumber", "ifscCode"]
+                    attributes: ["id", "companyName", "companyGstNumber", "companyAddress", "branchName", "companyAccountNumber", "ifscCode", "invoiceTemplate"]
                 });
             }
             if (!company && rawCompId) {
                 company = await CompanyProfiles.findByPk(rawCompId, {
-                    attributes: ["id", "companyName", "companyGstNumber", "companyAddress", "branchName", "companyAccountNumber", "ifscCode"]
+                    attributes: ["id", "companyName", "companyGstNumber", "companyAddress", "branchName", "companyAccountNumber", "ifscCode", "invoiceTemplate"]
                 });
             }
             if (company) invoice.setDataValue('CompanyProfile', company);

@@ -1,0 +1,274 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+body {
+    font-family: Arial, sans-serif;
+    padding: 20px;
+    background: white;
+}
+.invoice-document {
+    max-width: 900px;
+    margin: 0 auto;
+    border: 2px solid #000;
+    background: white;
+}
+.header-strip {
+    background: #000;
+    color: white;
+    padding: 25px 35px;
+}
+.header-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.company-title {
+    flex: 1;
+}
+.company-title h1 {
+    font-size: 34px;
+    margin-bottom: 6px;
+    letter-spacing: 2px;
+}
+.company-title .tagline {
+    font-size: 13px;
+    opacity: 0.9;
+}
+.invoice-type {
+    background: white;
+    color: #000;
+    padding: 15px 25px;
+    border-radius: 3px;
+    text-align: center;
+    font-weight: bold;
+    font-size: 18px;
+    letter-spacing: 2px;
+}
+.sub-header {
+    background: #f5f5f5;
+    padding: 12px 35px;
+    border-bottom: 2px solid #000;
+    font-size: 11px;
+    text-align: center;
+}
+.content-wrapper {
+    padding: 30px 35px;
+}
+.invoice-meta {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 25px;
+    padding-bottom: 20px;
+    border-bottom: 2px solid #e0e0e0;
+}
+.meta-item {
+    font-size: 13px;
+}
+.meta-item strong {
+    color: #000;
+}
+.parties-row {
+    display: grid;
+    grid-template-columns: 1fr 2px 1fr;
+    gap: 30px;
+    margin-bottom: 30px;
+}
+.party-card {
+    background: #fafafa;
+    padding: 20px;
+    border: 1px solid #e0e0e0;
+}
+.party-card h3 {
+    background: #000;
+    color: white;
+    padding: 8px 12px;
+    margin: -20px -20px 15px -20px;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-weight: normal;
+}
+.party-card p {
+    font-size: 12px;
+    margin: 6px 0;
+    color: #333;
+}
+.vertical-divider {
+    background: #e0e0e0;
+}
+.items-heading {
+    background: #000;
+    color: white;
+    padding: 10px 15px;
+    margin-bottom: 0;
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+.items-table {
+    width: 100%;
+    border: 1px solid #000;
+    border-top: none;
+    border-collapse: collapse;
+}
+.items-table thead {
+    background: #f0f0f0;
+}
+.items-table th {
+    padding: 12px 10px;
+    text-align: left;
+    font-size: 11px;
+    border: 1px solid #ddd;
+    font-weight: bold;
+    text-transform: uppercase;
+}
+.items-table td {
+    padding: 12px 10px;
+    font-size: 12px;
+    border: 1px solid #ddd;
+}
+.items-table tbody tr:nth-child(odd) {
+    background: #fafafa;
+}
+.items-table tbody tr:nth-child(even) {
+    background: white;
+}
+.txt-right {
+    text-align: right;
+}
+.txt-center {
+    text-align: center;
+}
+.summary-grid {
+    display: grid;
+    grid-template-columns: 1fr 400px;
+    gap: 25px;
+    margin-top: 30px;
+}
+.bank-card {
+    background: #fafafa;
+    border: 1px solid #e0e0e0;
+    padding: 20px;
+}
+.bank-card h4 {
+    background: #000;
+    color: white;
+    padding: 8px 12px;
+    margin: -20px -20px 15px -20px;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+.bank-card p {
+    font-size: 11px;
+    margin: 6px 0;
+    color: #333;
+}
+.bank-card .note {
+    margin-top: 12px;
+    padding-top: 10px;
+    border-top: 1px solid #ddd;
+    font-size: 10px;
+    color: #666;
+    font-style: italic;
+}
+.totals-card {
+    border: 1px solid #000;
+}
+.total-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 11px 18px;
+    font-size: 13px;
+    border-bottom: 1px solid #e0e0e0;
+}
+.total-item:last-child {
+    border-bottom: none;
+}
+.total-item.subtotal {
+    background: #f5f5f5;
+    font-weight: 600;
+}
+.total-item.final {
+    background: #000;
+    color: white;
+    font-weight: bold;
+    font-size: 17px;
+}
+.words-strip {
+    margin-top: 25px;
+    background: #fffef0;
+    border: 1px solid #e0e0e0;
+    border-left: 5px solid #000;
+    padding: 15px 20px;
+    font-size: 13px;
+}
+.bottom-area {
+    margin-top: 35px;
+    padding-top: 25px;
+    border-top: 3px solid #000;
+    display: grid;
+    grid-template-columns: 1.5fr 1fr;
+    gap: 30px;
+}
+.terms-block h4 {
+    font-size: 14px;
+    margin-bottom: 12px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+.terms-block ul {
+    list-style: none;
+    padding: 0;
+}
+.terms-block li {
+    font-size: 11px;
+    margin: 7px 0;
+    padding-left: 20px;
+    position: relative;
+    line-height: 1.5;
+}
+.terms-block li:before {
+    content: "▸";
+    position: absolute;
+    left: 0;
+    font-weight: bold;
+}
+.sign-block {
+    background: #fafafa;
+    border: 1px solid #e0e0e0;
+    padding: 20px;
+    text-align: center;
+}
+.sign-block .company {
+    font-size: 13px;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+.sign-space {
+    height: 65px;
+    margin: 20px 30px 15px 30px;
+    border-bottom: 2px solid #000;
+}
+.sign-block .signatory {
+    font-size: 12px;
+    font-weight: bold;
+}
+.sign-block .stamp-text {
+    font-size: 10px;
+    color: #666;
+    margin-top: 10px;
+}
+.footer-black {
+    background: #000;
+    color: white;
+    text-align: center;
+    padding: 15px;
+    font-size: 11px;
+    margin-top: 0;
+}
+.footer-black p {
+    margin: 3px 0;
+}

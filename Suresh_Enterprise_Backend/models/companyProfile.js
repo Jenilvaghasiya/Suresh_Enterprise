@@ -18,6 +18,7 @@ const CompanyProfiles = sequelize.define(
     country: { type: DataTypes.STRING, allowNull: false },
     gstMasterId: { type: DataTypes.INTEGER, allowNull: false },
     companyLogo: { type: DataTypes.STRING, allowNull: true },
+    invoiceTemplate: { type: DataTypes.STRING, allowNull: true, defaultValue: 'view1' },
     isActive: { type: DataTypes.BOOLEAN, defaultValue: true },
   },
   {
