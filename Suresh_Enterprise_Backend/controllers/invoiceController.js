@@ -346,7 +346,7 @@ exports.getInvoicesByCompanyId = async (req, res, next) => {
                 },
                 {
                     model: CompanyProfiles,
-                    attributes: ["id", "companyName", "companyGstNumber", "companyAddress", "branchName", "companyAccountNumber", "ifscCode"]
+                    attributes: ["id", "companyName", "companyGstNumber", "companyAddress", "branchName", "companyAccountNumber", "ifscCode", "invoiceTemplate"]
                 },
                 {
                     model: InvoiceItems,
@@ -425,7 +425,7 @@ exports.getInvoiceById = async (req, res, next) => {
                 },
                 {
                     model: CompanyProfiles,
-                    attributes: ["id", "companyName", "companyGstNumber", "companyAddress", "branchName", "companyAccountNumber", "ifscCode"]
+                    attributes: ["id", "companyName", "companyGstNumber", "companyAddress", "branchName", "companyAccountNumber", "ifscCode", "invoiceTemplate"]
                 },
                 {
                     model: InvoiceItems,
@@ -627,7 +627,7 @@ exports.generateInvoicePDF = async (req, res, next) => {
                 },
                 {
                     model: CompanyProfiles,
-                    attributes: ["id", "companyName", "companyGstNumber", "companyAddress", "branchName", "companyAccountNumber", "ifscCode"]
+                    attributes: ["id", "companyName", "companyGstNumber", "companyAddress", "branchName", "companyAccountNumber", "ifscCode", "invoiceTemplate"]
                 },
                 {
                     model: InvoiceItems,
@@ -668,6 +668,28 @@ exports.generateInvoicePDF = async (req, res, next) => {
             }
             if (company) invoice.setDataValue('CompanyProfile', company);
         }
+        // Final safety: if CompanyProfile still missing or missing template, resolve via raw SQL (handles padded IDs)
+        if (!invoice.CompanyProfile || !invoice.CompanyProfile.invoiceTemplate) {
+            const rawId = invoice.companyProfileId != null ? String(invoice.companyProfileId) : '';
+            if (rawId) {
+                try {
+                    const [row] = await sequelize.query(
+                        "SELECT id, invoiceTemplate FROM company_profiles WHERE id = :raw OR id = LPAD(:raw, 4, '0') LIMIT 1",
+                        { replacements: { raw: rawId }, type: sequelize.QueryTypes.SELECT }
+                    );
+                    if (row) {
+                        const merged = {
+                            ...(invoice.CompanyProfile ? (invoice.CompanyProfile.get ? invoice.CompanyProfile.get({ plain: true }) : invoice.CompanyProfile) : {}),
+                            id: row.id,
+                            invoiceTemplate: row.invoiceTemplate,
+                        };
+                        invoice.setDataValue('CompanyProfile', merged);
+                    }
+                } catch (e) {
+                    console.warn('CompanyProfile raw resolve failed:', e?.message || e);
+                }
+            }
+        }
         if (!invoice.Customer && invoice.customerId) {
             const customer = await Customers.findByPk(invoice.customerId, {
                 attributes: ["id", "customerName", "billingAddress", "gstNumber", "stateCode"]
@@ -675,6 +697,7 @@ exports.generateInvoicePDF = async (req, res, next) => {
             if (customer) invoice.setDataValue('Customer', customer);
         }
 
+        console.log('Invoice PDF template:', invoice.CompanyProfile?.invoiceTemplate, 'Company:', invoice.CompanyProfile?.id || invoice.companyProfileId, 'Invoice:', invoice.id);
         const pdfBuffer = await pdfService.generateBillPDF(invoice, copyType);
 
         res.setHeader('Content-Type', 'application/pdf');

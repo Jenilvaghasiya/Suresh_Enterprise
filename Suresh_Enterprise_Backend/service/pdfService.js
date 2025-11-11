@@ -147,15 +147,18 @@ class PDFService {
             const invoicePlain = invoice?.get ? invoice.get({ plain: true }) : (invoice || {});
             const company = invoicePlain.CompanyProfile || {};
             const tplKeyRaw = (company.invoiceTemplate || 'view1').toString().toLowerCase();
-            const tplKey = ['view1','view2','view3'].includes(tplKeyRaw) ? tplKeyRaw : 'view1';
+            console.log(company.invoiceTemplate);
+            const tplKey = ['view1','view2','view3','view4'].includes(tplKeyRaw) ? tplKeyRaw : 'view1';
 
             const templateFile = tplKey === 'view1' ? 'billView1.hsb'
                 : tplKey === 'view2' ? 'billView2.hsb'
                 : tplKey === 'view3' ? 'billView3.hsb'
+                : tplKey === 'view4' ? 'billView4.hsb'
                 : 'billView1.hsb';
             const cssFile = tplKey === 'view1' ? 'billView1.css'
                 : tplKey === 'view2' ? 'billView2.css'
                 : tplKey === 'view3' ? 'billView3.css'
+                : tplKey === 'view4' ? 'billView4.css'
                 : 'billView1.css';
 
             let templatePath = path.join(__dirname, '../templates/bill', templateFile);
