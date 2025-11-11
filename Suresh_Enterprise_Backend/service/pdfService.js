@@ -201,10 +201,11 @@ class PDFService {
                 amount: Number(item.amount ?? (Number(item.rate ?? 0) * Number(item.quantity ?? 1))).toFixed(2)
             }));
 
-            // Add empty rows to reach a compact total row count to fit A4 one-page
-            const targetRows = 17;
-            const emptyRowsCount = Math.max(0, targetRows - items.length);
-            const emptyRows = Array(emptyRowsCount).fill({});
+            // Add empty rows only for specific templates (view1, view2) to keep one-page layout
+            const shouldPadRows = ['view1', 'view2', 'view3', 'view4'].includes(tplKey);
+            const targetRows = shouldPadRows ? 17 : 0;
+            const emptyRowsCount = shouldPadRows ? Math.max(0, targetRows - items.length) : 0;
+            const emptyRows = emptyRowsCount > 0 ? Array(emptyRowsCount).fill({}) : [];
 
             const data = {
                 css: cssContent,
@@ -212,7 +213,7 @@ class PDFService {
                 invoice: invoicePlain,
                 customer,
                 company,
-                billNo: this.formatBillNo(invoicePlain, company),
+                billNo: this.formatBillNo(invoicePlain, company).replace(/\./g, ''),
                 billDate: this.formatDateDDMMYYYY(invoicePlain.billDate),
                 items,
                 emptyRows,

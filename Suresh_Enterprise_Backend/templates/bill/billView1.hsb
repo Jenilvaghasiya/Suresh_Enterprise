@@ -70,9 +70,7 @@
                             <th style="width: 10%;">HSN Code</th>
                             <th style="width: 8%;">Qty</th>
                             <th style="width: 7%;">Unit</th>
-                            <th style="width: 10%;">MRP</th>
                             <th style="width: 10%;">Rate</th>
-                            <th style="width: 7%;">GST%</th>
                             <th style="width: 10%;" class="align-right">Amount</th>
                         </tr>
                     </thead>
@@ -84,17 +82,13 @@
                             <td class="align-center">{{this.hsnCode}}</td>
                             <td class="align-center">{{this.quantity}}</td>
                             <td class="align-center">{{this.uom}}</td>
-                            <td class="align-right">₹ {{#if this.mrp}}{{this.mrp}}{{else}}-{{/if}}</td>
                             <td class="align-right">₹ {{this.rate}}</td>
-                            <td class="align-center">{{#if this.gstRate}}{{this.gstRate}}{{else}}{{this.taxRate}}{{/if}}%</td>
                             <td class="align-right">₹ {{#if this.total}}{{this.total}}{{else}}{{this.amount}}{{/if}}</td>
                         </tr>
                         {{/each}}
                         {{#each emptyRows}}
                         <tr>
                             <td class="align-center">&nbsp;</td>
-                            <td></td>
-                            <td></td>
                             <td></td>
                             <td></td>
                             <td></td>

@@ -67,8 +67,6 @@
                         <th style="width: 8%;">Qty</th>
                         <th style="width: 7%;">Unit</th>
                         <th style="width: 10%;">Rate</th>
-                        <th style="width: 8%;">GST%</th>
-                        <th style="width: 9%;">GST Amt</th>
                         <th style="width: 10%;" class="txt-right">Total</th>
                     </tr>
                 </thead>
@@ -81,8 +79,6 @@
                         <td class="txt-center">{{this.quantity}}</td>
                         <td class="txt-center">{{this.uom}}</td>
                         <td class="txt-right">₹ {{this.rate}}</td>
-                        <td class="txt-center">{{this.gstRate}}%</td>
-                        <td class="txt-right">₹ {{this.gstAmount}}</td>
                         <td class="txt-right">₹ {{#if this.total}}{{this.total}}{{else}}{{this.amount}}{{/if}}</td>
                     </tr>
                     {{/each}}
@@ -95,8 +91,6 @@
                         <td class="txt-center"></td>
                         <td class="txt-right"></td>
                         <td class="txt-center"></td>
-                        <td class="txt-right"></td>
-                        <td class="txt-right"></td>
                     </tr>
                     {{/each}}
                 </tbody>
