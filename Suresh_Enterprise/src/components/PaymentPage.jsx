@@ -59,25 +59,39 @@ const PaymentPage = () => {
   const isCustomerUser = currentUser?.userType === "Customer User";
 
   useEffect(() => {
-    const loadCustomers = async () => {
-      setLoading(true);
-      const [res, err] = await safeApiCall(getCustomers);
-      if (err) {
-        setError("Failed to load customers");
-      } else {
-        const list = Array.isArray(res?.data) ? res.data : [];
-        const scoped = isCustomerUser && currentUser?.company_id
-          ? list.filter(c => c.company_id === currentUser.company_id)
-          : list;
-        setCustomers(scoped);
-        if (!preselectCustomerId && scoped.length > 0) {
-          setSelectedCustomerId(String(scoped[0].id));
-        }
-      }
+  const loadCustomers = async () => {
+    setLoading(true);
+    const [res, err] = await safeApiCall(getCustomers);
+    if (err) {
+      setError("Failed to load customers");
       setLoading(false);
-    };
-    loadCustomers();
-  }, [isCustomerUser, currentUser, preselectCustomerId]);
+      return;
+    }
+
+    const list = Array.isArray(res?.data) ? res.data : [];
+
+    // ✅ Filter customers by logged-in user's company_id
+    let filteredCustomers = list;
+    if (currentUser?.company_id) {
+      filteredCustomers = list.filter(c => String(c.company_id) === String(currentUser.company_id));
+    }
+
+    setCustomers(filteredCustomers);
+
+    // ✅ Auto-select if only one customer or preselect from query
+    if (preselectCustomerId) {
+      setSelectedCustomerId(preselectCustomerId);
+    } else if (filteredCustomers.length === 1) {
+      setSelectedCustomerId(String(filteredCustomers[0].id));
+    } else if (filteredCustomers.length > 0) {
+      setSelectedCustomerId(String(filteredCustomers[0].id));
+    }
+
+    setLoading(false);
+  };
+
+  loadCustomers();
+}, [currentUser, preselectCustomerId]);
 
   // Track mobile viewport
   useEffect(() => {
