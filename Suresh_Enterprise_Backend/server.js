@@ -44,7 +44,11 @@ app.use('/api/users', userRoutes);
 const paymentRoutes = require('./routes/paymentRoutes');
 app.use('/api/payments', paymentRoutes);
 app.use('/api/ledger', ledgerRoutes);
-
+app.use('/',(req,res) => {
+        res.json({
+            status : "ok"
+    })
+})
 app.use((err, req, res, next) => {
     console.error("Error:", err.stack);
     res.status(err.status || 500).json({
