@@ -162,7 +162,8 @@ const CompanyTable = ({ onEditClick, refreshTrigger }) => {
         </div>
       )}
 
-      <table className="company-table">
+      <div style={{ overflowX: "auto", maxWidth: "100%" }}>
+      <table className="company-table" style={{ minWidth: 900 }}>
         <thead>
           <tr>
             <th>Sr No</th>
@@ -179,7 +180,7 @@ const CompanyTable = ({ onEditClick, refreshTrigger }) => {
             <th>State</th>
             <th>Country</th>
             <th>GST Rate</th>
-            <th>Bill View</th>
+            <th>Invoice Template</th>
             <th>Status</th>
             <th>Actions</th>
           </tr>
@@ -221,16 +222,26 @@ const CompanyTable = ({ onEditClick, refreshTrigger }) => {
                     ? `${getGstRate(c.gstMasterId)}%`
                     : "-"}
                 </td>
-                <td data-label="Bill View">
-                  <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                    <img
-                      src={templateImgs[(c.invoiceTemplate || "view1").toLowerCase()]}
-                      alt={templateName(c.invoiceTemplate)}
-                      style={{ width: 56, height: 36, objectFit: "cover", border: "1px solid #e5e7eb", borderRadius: 4 }}
-                    />
-                    <span>{templateName(c.invoiceTemplate)}</span>
-                  </div>
-                </td>
+<td data-label="Invoice Template">
+  <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
+    <img
+      src={templateImgs[(c.invoiceTemplate || "view1").toLowerCase()]}
+      alt={templateName(c.invoiceTemplate)}
+      style={{
+        width: 80,
+        height: 50,
+        objectFit: "cover",
+        border: "1px solid #e5e7eb",
+        borderRadius: 4,
+        marginBottom: 6,
+      }}
+    />
+    <span style={{ fontSize: "13px", fontWeight: "500", color: "#333" }}>
+      {templateName(c.invoiceTemplate)}
+    </span>
+  </div>
+</td>
+
                 <td data-label="Status">{c.isActive ? "Active" : "Inactive"}</td>
                 <td data-label="Actions">
                   <button
@@ -259,6 +270,7 @@ const CompanyTable = ({ onEditClick, refreshTrigger }) => {
           )}
         </tbody>
       </table>
+      </div>
 
       {/* Pagination Controls */}
       {totalPages > 1 && (

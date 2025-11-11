@@ -24,7 +24,7 @@ const CompanyPage = () => {
   const isCustomer = currentUser?.userType === "Customer User";
 
   return (
-    <div className="company-page-container">
+    <div className="company-page-container" style={{ minHeight: "100vh", display: "flex", flexDirection: "column" }}>
       <div className="company-page-header">
         <h2>Company Profile Management</h2>
         {!isCustomer && (
@@ -33,7 +33,7 @@ const CompanyPage = () => {
           </button>
         )}
       </div>
-      <div className="company-body">
+      <div className="company-body" style={{ flex: 1, overflowY: "auto" }}>
         {showForm ? (
           <CompanyForm
             editCompany={editCompany}
